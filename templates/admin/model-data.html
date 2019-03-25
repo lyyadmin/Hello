@@ -1,0 +1,144 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<!--[if lt IE 9]>
+<script type="text/javascript" src="lib/html5shiv.js"></script>
+<script type="text/javascript" src="lib/respond.min.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="static/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="static/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="static/css/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="static/css/style.css" />
+<!--[if IE 6]>
+<script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<title>3D饼状图</title>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 模型管理 <span class="c-gray en">&gt;</span> 模型展示 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+	<div id="container" style="min-width:700px;height:400px"></div>
+</div>
+
+<!--_footer 作为公共模版分离出去--> 
+<script type="text/javascript" src="/static/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="/static/js/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="/static/js/H-ui.min.js"></script>
+<script type="text/javascript" src="/static/js/H-ui.admin.js"></script>
+<!--/_footer 作为公共模版分离出去-->
+
+<script type="text/javascript">
+﻿﻿$(function () {
+	function init_data(){
+		get_models_data();
+	}
+	function get_models_data(){
+		$.ajax({
+			type: "POST",
+			url: "model/modellist",
+			async: false,
+			error: function(request) {
+				alert("Connection error");
+			},
+			success: function(data) {
+				var obj = JSON.parse(data);
+				var count = obj.count;
+				if(count>0) {
+					request_data(obj.data);
+				}
+			}
+		});
+	}
+	function request_data(datas){
+		for(var i=0;i<datas.length;i++){
+			var model = datas[i];
+			request_model_data(model);
+		}
+	}
+	function request_model_data(m){
+		datas = {"id":m.model_id};
+		$.ajax({
+			type: "POST",
+			url: "model/modeldata",
+			data:datas,
+			async: true,
+			error: function(request) {
+				alert("Connection error");
+			},
+			success: function(data) {
+				var obj = JSON.parse(data);
+				show_in_table(obj);
+			}
+		});
+	}
+	function append(p,c){
+		$(p).append(c);
+	}
+	function show_in_table(obj){
+		var table = document.createElement("table");
+		table.className = "table table-border table-bordered table-hover table-bg";
+		table.style.marginTop = "20px";
+		table.style.marginBottom = "20px";
+		var alias = obj.key_alias;
+		var data = obj.data;
+		var count = obj.count;
+		
+		var tr = document.createElement("tr");
+		tr.className = "text-c";
+		tr.style.background = "#F5FAFE";
+		var th = document.createElement("th");
+		th.innerHTML = obj.name+"("+count+")";
+		th.setAttribute("scope","col")
+		th.setAttribute("colspan","9")
+		append(tr,th);
+		append(table,tr);
+		
+		var tr = document.createElement("tr");
+		tr.className = "text-c";
+		tr.style.background = "#F5FAFE";
+		var has = 0;
+		for(var key in alias){
+			var th = document.createElement("th");
+			var al = alias[key]
+			if(al==""){
+				al = key;
+			}
+			th.innerHTML = al;
+			append(tr,th);
+			has = 1;
+		}
+		if(has==1){
+			append(table,tr);
+			for(var j=0;j<count;j++){
+				var da = data[j];
+				var tr = document.createElement("tr");
+				tr.className = "text-c";
+				for(var key in da){
+					var td = document.createElement("td");
+					td.innerHTML = da[key];
+					append(tr,td);
+				}
+				append(table,tr);
+			}
+		}else{
+			var tr = document.createElement("tr");
+			tr.className = "text-c";
+			tr.style.background = "#F5FAFE";
+			var th = document.createElement("th");
+			th.innerHTML = "未设置模型参数";
+			append(tr,th);
+			append(table,tr);
+		}
+		append(document.getElementById("container"),table);
+	}
+	init_data();
+});
+</script>
+</body>
+</html>

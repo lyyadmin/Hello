@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>数据浏览</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css" />
+    <!--<script type="text/javascript" src="/static/js/bootstrap.min.js"></script>-->
+    <style type="text/css">
+        *{
+            margin: 0px;
+            padding: 0px;
+        }
+        .table-box{
+            text-align: center;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="table-box">
+    <table class="table table-border table-bordered table-condensed text-center table-striped table-hover">
+        <caption class="text-center h4 text-primary">数据浏览({{len(data)}})</caption>
+        <thead class="bg-primary">
+        <tr>
+            {% for key in data[0] %}
+            <th class="text-center" style="color: #FFFFFF">{{key}}</th>
+            {% end %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for key in data %}
+        <tr>
+            {% for k in key %}
+            <td>{{key[k]}}</td>
+            {% end %}
+        </tr>
+        {% end %}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>admin</title>
+    <script type="text/javascript" src="/static/workflow/js/jquery-1.12.4.js"></script>
+    <style type="text/css">
+        *{
+            margin: 0px;
+            padding: 0px;
+            font-size: 12px;
+        }
+        .header{
+            width: 100%;
+            line-height: 46px;
+            background: #3c4b5e;
+            color: #FFFFFF;
+            text-align: center;
+            font-size: 20px;
+        }
+        #content-left{
+            border: solid 5px #999999;
+            text-align: center;
+        }
+        #content-right{
+            border: solid 5px #999999;
+        }
+        .user-item{
+            position: relative;
+            height:22px;
+            font-size: 14px;
+            margin-top: 8px;
+            margin-bottom: 8px;
+            margin-left: 20px;
+        }
+        .user-item-img{
+            position: absolute;
+            width: 22px;
+            height:22px;
+            border-radius: 11px;
+            display: inline-block;
+            left: 5px;
+        }
+        .user-item span{
+            position: absolute;
+            line-height:22px;
+            left: 30px;
+        }
+        .user-item input{
+            position: absolute;
+            width: 14px;
+            height:14px;
+            top:4px;
+            right: 60px;
+        }
+        #msg-content{
+            width:100%;
+            height:246px;
+            background: #FFFFFF;
+            overflow: auto;
+            text-align: left;
+            padding: 2px;
+        }
+        .tool-content{
+            width:100%;
+            height:30px;
+            text-align: left;
+            background: #F1F1F1;
+        }
+        #emo-menu{
+            position: relative;
+            width: 20px;
+            height: 20px;
+            margin-left: 5px;
+            margin-top: 3px;
+        }
+        #emo-list{
+            position: absolute;
+            width:485px;
+            height:224px;
+            background: #FFFFFF;
+            display: none;
+            overflow: scroll;
+            border: solid 2px #bcbcbc;
+            border-radius: 5px;
+            padding: 5px;
+            left: 10px;
+            top:15px;
+        }
+        .emo-item{
+            list-style: none;
+            float: left;
+            margin-left: 2px;
+        }
+        .emo-item img{
+            width: 40px;
+            height: 40px;
+        }
+        .input-box{
+            height: 105px;
+        }
+        #input-msg-box{
+            position: relative;
+            height:105px;
+        }
+        #send-msg{
+            position: absolute;
+            width: 50px;
+            height: 20px;
+            right:0px;
+            bottom:0px;
+        }
+    </style>
+</head>
+<body>
+<div class="header">后台信息管理</div>
+<div class="content">
+    <div id="content-left"></div>
+    <div id="content-right">
+        <div id="msg-content"></div>
+        <div class="tool-content">
+            <img id="emo-menu" src="/static/workflow/images/emo.png"/>
+        </div>
+        <div id="emo-list">
+            <ul id="emo-list-box"></ul>
+        </div>
+        <textarea id="input-msg-box" placeholder=""></textarea>
+        <input id="send-msg" type="button" value="发送">
+    </div>
+</div>
+<script type="text/javascript">
+    (function () {
+        var w,h;
+        var websocket;
+        function setupView(){
+            w = $(document).width();
+            h = $(document).height();
+            $("#content-left").css({
+                width:200+"px",
+                height:(h-46-10)+"px",
+                position:"absolute"
+            });
+            $("#content-right").css({
+                width:(w-200-20)+"px",
+                height:(h-46-10)+"px",
+                left:(210)+"px",
+                position:"absolute"
+            });
+            $("#msg-content").css({
+                width:(w-200-20-5)+"px",
+                height:(h-46-10-140)+"px"
+            });
+            $("#emo-list").css({
+                top:(h-46-10-140-224-10)+"px",
+            });
+            $("#input-msg-box").css({
+                width:(w-200-20)+"px",
+            });
+        }
+        function initSendMsg() {
+            $("#send-msg").click(function () {
+                var msg = $("#input-msg-box").val();
+                websocket.send(msg);
+                $("#input-msg-box").val("");
+            });
+            $("#emo-menu").click(function () {
+                $("#emo-list").toggle();
+            });
+            function add_emo(con,num,dump) {
+                for(var i=0;i<num;i++){
+                    var item = '<li class="emo-item"><img src="/static/workflow/images/lkkbr/'+con+i+'.'+dump+'"/></li>';
+                    $("#emo-list-box").append(item);
+                }
+            }
+            add_emo("amo",3,"png");
+            add_emo("bmo",10,"jpg");
+            add_emo("emo",29,"gif");
+            $(".emo-item img").click(function () {
+                var imgstr = '<img src="'+$(this).attr("src")+'"/>'
+                $("#emo-list").toggle();
+                websocket.send(imgstr);
+            });
+        }
+        function connectServer() {
+            var wsUri = "ws://192.168.1.105/ws/adminconnect";
+            var userid;
+            websocket = new WebSocket(wsUri);
+            websocket.username = "admin";
+            websocket.onopen = function (evt) {
+            };
+            websocket.onclose = function (evt) {
+                var da = evt.data;
+                if(da.indexOf("closeuser")>-1){
+                    var idstr = da.substr(9,da.length);
+                    $('#'+idstr).remove();
+                }
+            };
+            var zimu = [];
+            var cont = document.getElementById("content-right");
+            websocket.onmessage = function (evt) {
+                var da = evt.data;
+                if(da.indexOf("sendmsg")>-1){
+                    var usermsg = da.substr("sendmsg".length,da.length);
+                    var child = '<div><span>'+usermsg+'</span></div>';
+                    $("#msg-content").append(child);
+                    cont.scrollTop = cont.scrollHeight;
+                }else if(da.indexOf("closeuser")>-1){
+                    var idstr = da.substr(9,da.length);
+                    $('#'+idstr).remove();
+                }else if(da.indexOf("user")>-1){
+                    var idstr = da.substr(4,da.length);
+                    var child = '<div class="user-item" id="'+idstr+'"><img class="user-item-img" src="/static/workflow/images/m_photo.png"><span>'+idstr+'</span><input type="checkbox"/></div>';
+                    $("#content-left").append(child);
+                }else if(da.indexOf("message")>-1){
+
+                }else{
+                    var child = '<p><span style="margin: 2px;">'+da+'</span></p>';
+                    $("#content-right").append(child);
+                    cont.scrollTop = cont.scrollHeight;
+                }
+            };
+            websocket.onerror = function (evt) {
+                console.log("onerror");
+            };
+        }
+        function initEvent() {
+            $("#send-msg").click(function () {
+                var msg = $("#input-msg-box").val();
+                websocket.send(msg);
+                $("#input-msg-box").val("");
+            });
+        }
+        setupView();
+        initSendMsg();
+        initEvent();
+        connectServer();
+    })();
+</script>
+</body>
+</html>

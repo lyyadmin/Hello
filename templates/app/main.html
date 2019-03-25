@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf8" />
+		<meta charset="UTF-8">
+		<title>主页面</title>
+		<link rel="stylesheet" href="/static/app/css/style.p.css" />
+		<link rel="stylesheet" href="/static/app/css/laydate.css" />
+		<link rel="stylesheet" href="/static/app/skins/default/laydate.css" />
+		<script type="text/javascript" src="/static/app/js/jquery-3.2.1.min.js"></script>
+		<script type="text/javascript" src="/static/app/js/public.js"></script>
+		<script type="text/javascript" src="/static/app/js/laydate.dev.js"></script>
+		<style type="text/css">
+			.mine-phone {
+				position: relative;
+				width: 100%;
+				height: 120px;
+				text-align: center;
+				background: #088CB7;
+				padding-bottom: 20px;
+				margin-top:50px;
+			}
+			
+			.mine-phone img {
+				position: relative;
+				width: 80px;
+				height: 80px;
+				border-radius: 40px;
+				margin: 10px 40px;
+			}
+			
+			.mine-phone span {
+				position: relative;
+				width: auto;
+				height: auto;
+				color: #FFFFFF;
+				font-size: 14px;
+				display: block;
+			}
+			
+			.home-list {
+				width: 80%;
+				height: auto;
+				margin: 40px 5%;
+				padding: 30px 5%;
+				border: solid 1px #099CB8;
+				border-radius: 15px;
+				background: #EEEEEE;
+			}
+			
+			.home-list-box {
+				list-style: none;
+				text-align: center;
+			}
+			
+			.home-list-box li {
+				width: 100%;
+				height: 45px;
+				line-height: 45px;
+				font-size: 18px;
+				margin-top: 1px;
+			}
+			
+			.home-list-box li span {
+				color: #000000;
+			}
+			
+			.home-list-box li input {
+				width: 43%;
+				height: 30px;
+				padding-left: 2%;
+			}
+			
+			.home-list-box li select {
+				width: 46%;
+				height: 32px;
+			}
+			
+			.home-list-submit {
+				width: 72%;
+				height: 40px;
+				line-height: 40px;
+				margin: 15px auto;
+				background: #099CB8;
+				color: #FFFFFF;
+				border-radius: 10px;
+			}
+			
+			.home-list-submit:hover {
+				background: #088CB7;
+				cursor: default;
+			}
+		</style>
+		<script type="text/javascript">
+			function init() {
+				initVoiceAnimal();
+				initSelect();
+				laydate({
+					elem: '#starttime'
+				});
+				laydate({
+					elem: '#endtime'
+				});
+				var item = localStorage.getItem("clickitem");
+				if(item){
+					menuclick(item);
+				}else{
+				    menuclick('home');
+				}
+			}
+
+			function menuclick(str) {
+				var home = document.getElementById("home");
+				var mine = document.getElementById("mine");
+				var himg = document.getElementById("menu-home-img");
+				var mimg = document.getElementById("menu-mine-img");
+                var hspan = document.getElementById("menu-home-span");
+                var mspan = document.getElementById("menu-mine-span");
+				if(str == 'home') {
+					home.style.display = "block";
+					mine.style.display = "none";
+					hspan.style.color = "#088CB7";
+					mspan.style.color = "#333333";
+					himg.src = "/static/app/img/home_select.png";
+                    mimg.src = "/static/app/img/me.png";
+				} else {
+					home.style.display = "none";
+					mine.style.display = "block";
+					hspan.style.color = "#333333";
+					mspan.style.color = "#088CB7";
+                    himg.src = "/static/app/img/home.png";
+                    mimg.src = "/static/app/img/me_select.png";
+				}
+				localStorage.setItem("clickitem",str);
+			}
+
+			function setItem(selectelem, arr) {
+				for(var i = 0; i < arr.length; i++) {
+					var opt = document.createElement("option");
+					opt.innerHTML = arr[i];
+					selectelem.appendChild(opt);
+				}
+			}
+
+			function initSelect() {
+				var name = ["排序", "汇总", "均值", "频次分析", "趋势与预测", "交叉表", "数据分布图", "相关分析", "回归模型", "时间序列", "决策树", "关联分析"];
+				var aname = document.getElementById("algorithmname");
+				setItem(aname, name);
+			}
+			function inputclick(self){
+				self.blur();
+			}
+			function gotouserinfo(){
+				window.location = "usercenter.html";
+			}
+			function search(){
+				window.location = "paramchart.html?param=某地区降水量";
+			}
+			function mycollect(str){
+			    window.location = "mycollect.html?title="+str;
+			}
+		</script>
+	</head>
+
+	<body onload="init()">
+		<div id="home">
+			<div class="title-bar-box">
+				<span id="title-bar-info">返回</span>
+				<div class="title-bar-title">首页</div>
+				<a class="title-bar-setting" href="models.html">模块</a>
+			</div>
+			<div class="home-search-box">
+				<input id="home-search-text" type="text" placeholder="请输入指令" />
+				<img class="home-search-voice" src="/static/app/img/icon_voice.png" onclick="input_voice()" />
+				<div class="home-search-btn" onclick="runAlgorithm(0)">运行</div>
+			</div>
+			<div class="home-list">
+				<ul class="home-list-box">
+					<li><span>开始时间：</span>
+						<input id="starttime" placeholder="选择时间" onclick="inputclick(this)"/>
+					</li>
+					<li><span>结束时间：</span>
+						<input id="endtime" placeholder="选择时间" onclick="inputclick(this)"/>
+					</li>
+					<li><span>算法名称：</span>
+						<select id="algorithmname">
+						</select>
+					</li>
+					<li><span>查询条件：</span>
+						<input type="text" placeholder="输入查询条件">
+					</li>
+					<li>
+						<div class="home-list-submit" onclick="search()">确定</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div id="mine">
+			<div class="title-bar-box">
+				<!--<span class="title-bar-back"><img src="/static/app/img/back.png" />返回</span>-->
+				<span class="title-bar-title" id="main-title">我的</span>
+				<a class="title-bar-setting" href="setting.html">设置</a>
+			</div>
+			<div class="mine-phone">
+				<img src="/static/app/img/people.png" /><span>用户名</span>
+			</div>
+			<ul class="mine-user-box">
+				<li class="mine-user-info" onclick="gotouserinfo()">个人资料<img src="/static/app/img/right_arrow_hui.png" /></li>
+				<li class="mine-user-item">手机：<span id="phone-number">15800664806</span></li>
+				<li class="mine-user-item">邮箱：<span id="email">holiday@tenly.cn</span></li>
+				<li class="mine-user-item">省份：<span>上海</span></li>
+				<li class="mine-user-item">部门：<span>产品部</span></li>
+				<li class="mine-user-item">职位：<span>开发</span></li>
+			</ul>
+			<ul class="mine-user-box">
+				<li class="mine-user-info">我的</li>
+				<li class="mine-user-item" onclick="mycollect('history')">我的历史<img src="/static/app/img/right_arrow_hui.png" /></li>
+				<li class="mine-user-item" onclick="mycollect('mycollect')">我的收藏<img src="/static/app/img/right_arrow_hui.png" /></li>
+			</ul>
+		</div>
+		<div class="nav">
+			<div id="menu-home" onclick="menuclick('home')"><img id="menu-home-img" src="/static/app/img/home_select.png" /><span id="menu-home-span">首页</span></div>
+			<div id="menu-mine" onclick="menuclick('mine')"><img id="menu-mine-img" src="/static/app/img/me.png" /><span id="menu-mine-span">我的</span></div>
+		</div>
+        <div class="record_animal" id="recordBox">
+            <span>倾听中...</span></br>
+        </div>
+        <script type="text/javascript">
+        	$(function(){
+        		function init(){
+        			getUserInfo();
+        		}
+        		function getUserInfo(){
+        			$.ajax({
+						type: "POST",
+						url: "/app/getuserinfo",
+						data:{"userName":"lyy"},
+						async: false,
+						error: function(request) {
+							alert("Connection error");
+						},
+						success: function(data) {
+							var user = JSON.parse(data);
+							html("title-bar-info",user.user_name)
+							html("phone-number",user.phone)
+						}
+					});
+        		}
+        		function html(id,val){
+        			document.getElementById(id).innerHTML = val;
+        		}
+        		init();
+        	});
+        </script>
+	</body>
+
+</html>

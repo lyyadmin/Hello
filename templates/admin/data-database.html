@@ -1,0 +1,215 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<!--[if lt IE 9]>
+<script type="text/javascript" src="lib/html5shiv.js"></script>
+<script type="text/javascript" src="lib/respond.min.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="/static/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="/static/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="/static/css/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="/static/css/style.css" />
+<!--[if IE 6]>
+<script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<title>数据库管理</title>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 数据管理 <span class="c-gray en">&gt;</span> 数据库管理 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+	<div class="cl pd-5 bg-1 bk-gray"> <span class="l"> <a href="javascript:;" onclick="dataconnect()" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> <span id="conn_data">已连接数据</span></a> <a class="btn btn-primary radius" href="javascript:;" onclick="data_db_add('添加数据库','data-database-add.html?act=adddb','800','450')"><i class="Hui-iconfont">&#xe600;</i> 添加数据库</a> </span> <span class="r">共有数据：<strong><span id="db_total"></span></strong> 条</span> </div>
+	<table class="table table-border table-bordered table-hover table-bg">
+		<thead>
+			<tr>
+				<th scope="col" colspan="9">数据库管理</th>
+			</tr>
+			<tr class="text-c">
+				<th width="25"></th>
+				<th width="40">ID</th>
+				<th width="200">数据库地址</th>
+				<th width="200">数据库名</th>
+				<th width="200">端口号</th>
+				<th width="300">账号</th>
+				<th width="300">密码</th>
+				<th width="300">数据库类型</th>
+				<th width="70">操作</th>
+			</tr>
+		</thead>
+		<tbody id="dblist">
+		</tbody>
+	</table>
+</div>
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="/static/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="/static/js/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="/static/js/H-ui.min.js"></script>
+<script type="text/javascript" src="/static/js/H-ui.admin.js"></script>
+<!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/static/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+/*管理员-角色-添加*/
+function data_db_add(title,url,w,h){
+	layer_show(title,url,w,h);
+}
+/*管理员-角色-编辑*/
+function data_db_edit(title,url,w,h){
+	layer_show(title,url,w,h);
+}
+/*管理员-角色-删除*/
+function data_db_del(obj,id){
+	layer.confirm('角色删除须谨慎，确认要删除吗？',function(index){
+		$.ajax({
+			type: 'POST',
+			url: "/data/dbremove",
+			data:{"dbid":id},
+			dataType: 'json',
+			success: function(data) {
+				var str = '移除失败！'
+				if(data!="0"){
+					$(obj).parents("tr").remove();
+					str = '已删除！'
+				}
+				layer.msg(str, {
+					icon: 1,
+					time: 1000
+				});
+			},
+			error: function(data) {
+				layer.msg('移除失败！', {
+					icon: 1,
+					time: 1000
+				});
+			},
+		});			
+	});
+}
+
+function refresh_role_list(){
+	location.replace(location.href);
+}
+function role_load() {
+	$.ajax({
+		type: "POST",
+		url: "/data/dblist",
+		async: false,
+		error: function(request) {
+			alert("Connection error");
+		},
+		success: function(data) {
+			var obj = JSON.parse(data);
+			var count = obj.count;
+			$("#db_total").html(count);
+			if(count>0) {
+				addrolesinfo(obj.data);
+				initradioevent();
+			} else {
+				removeAllChild("dblist");
+			}
+		}
+	});
+}
+function removeAllChild(id){  
+    var div = document.getElementById(id);  
+    while(div.hasChildNodes()){ //当div下还存在子节点时 循环继续  
+        div.removeChild(div.firstChild);  
+    }  
+}  
+function addrolesinfo(dbs){
+	var list = $("#dblist");
+	removeAllChild("dblist")
+	for(var i=0;i<dbs.length;i++){
+		list.append(createChildView(i+1,dbs[i]))
+	}
+}
+function createChildView(i,db){
+	var _tr = document.createElement("tr");
+	var str = '<td>'
+	if(db.status==1){
+		str+= '<input type="radio" value="" name="radiogroup" checked dbid="'+db.db_id+'" status="'+db.status+'"/></td>';
+	}else{
+		str+= '<input type="radio" value="" name="radiogroup" dbid="'+db.db_id+'" status="'+db.status+'"/></td>';
+	}
+	str+= '<td>'+i+'</td>';
+	str+= '<td>'+db.db_host+'</td>';
+	str+= '<td>'+db.db_name+'</td>';
+	str+= '<td>'+db.db_port+'</td>';
+	str+= '<td>'+db.db_acount+'</td>';
+	str+= '<td>'+db.db_password+'</td>';
+	str+= '<td>'+db.db_type+'</td>';
+	str+= '<td class="f-14">';
+	str+= '<a title="编辑" href="javascript:;" onclick="data_db_edit(\'数据库编辑\',\'data-database-add.html?dbid='+db.db_id+'&act=editdb\',\'800\',\'450\')" style="text-decoration:none">'
+	str+= '<i class="Hui-iconfont">&#xe6df;</i>'
+	str+= '</a>'
+	str+= '<a title="删除" href="javascript:;" onclick="data_db_del(this,\''+db.db_id+'\')" class="ml-5" style="text-decoration:none">'
+	str+= '<i class="Hui-iconfont">&#xe6e2;</i>'
+	str+= '</a>'
+	str+= '</td>';
+	_tr.innerHTML = str;
+	_tr.setAttribute("class","text-c");
+	return _tr;
+}
+function initradioevent(){
+	$("#dblist").find("input[type='radio']").each(function (i) {
+		var status = $(this).attr("status").toString();
+		var cn = $("#conn_data");
+		$(this).click(function(){
+			if(status=="1"){
+				$(cn).html("已连接数据");
+			}else{
+				$(cn).html("切换数据库");
+			}
+		});
+	});
+}
+function dataconnect(){
+	var id = ""
+	var chbx = [];
+	$("#dblist").find("input[type='radio']").each(function (i) {
+		var checked = this.checked;
+		if (checked == true) {
+		    id = $(this).attr("dbid").toString();
+		    chbx['checked'] = this;
+		}
+		if($(this).attr("status")=="1"){
+			chbx['status'] = this;
+		}
+	});
+	$.ajax({
+		type: 'POST',
+		url: "/data/dataconn",
+		data:{"dbid":id},
+		dataType: 'json',
+		success: function(data) {
+			var str = '连接失败！'
+			if(data!="0"){
+				str = '已连接！'
+				$(chbx['checked']).attr("status","1")
+				$(chbx['status']).attr("status","0")
+				$("#conn_data").html("已连接数据");
+				initradioevent();
+			}
+			layer.msg(str, {
+				icon: 1,
+				time: 1000
+			});
+		},
+		error: function(data) {
+			layer.msg('连接失败！', {
+				icon: 1,
+				time: 1000
+			});
+		},
+	});
+}
+role_load();
+</script>
+</body>
+</html>

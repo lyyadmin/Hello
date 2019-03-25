@@ -1,0 +1,67 @@
+<div class="rockmenu" id="rockmenu_1510883219958_6065" style="display: none; right: 0px; top: 50px;">
+    <div style="background: rgb(255, 255, 255); width: 150px;" id="rockmenuli_1510883219958_6065" class="rockmenuli ">
+        <ul>
+            <li temp="0" style="" class=""><i class="icon-lock"></i> 修改密码</li>
+            <li temp="2" style="" class=""><i class="icon-picture"></i> 修改头像</li>
+            <li temp="4" style=""><i class="icon-user"></i> 帐号({{user['user_name']}})</li>
+            <li temp="5" style="border:none;" onclick="location.href='/user/exit';"><i class="icon-signout"></i> 退出</li>
+        </ul>
+    </div>
+</div>
+<div class="topheader" id="topheaderid">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0">
+        <tbody><tr>
+            <!-- logo -->
+            <td height="50" nowrap="">
+                <table border="0" cellspacing="0" cellpadding="0">
+                    <tbody>
+                    <tr>
+                        <td style="padding:0px 10px;" nowrap=""><img src="/static/images/logo.png" height="34" width="34" style="border-radius: 17px;"></td>
+                        <td style="font-size:18px;padding-right:20px" nowrap=""><font color="white">管理系统</font></td>
+                    </tr>
+                    </tbody></table>
+            </td>
+            <td width="80%">
+                <div class="topmenubg">
+								<span pmenuid="38" class="">
+					<i class="icon-desktop"></i> 用户管理				</span>
+                </div>
+            </td>
+        </tr>
+        </tbody></table>
+</div>
+
+<!-- 用户中心 -->
+<div class="topcenter" align="right">
+	<span id="indexuserl"><img src="/static/images/logo.png" style="border:1px #cccccc solid;background:#ffffff;border-radius:15px;cursor:pointer;margin-right:10px" align="absmiddle" id="myface" height="30" width="30">{{user['user_name']}}&nbsp;
+		 <i class="icon-caret-down"></i>
+	</span>
+</div>
+
+<script>
+    $(function(){
+        $("#indexuserl").click(function(){
+            var d = $(".rockmenu").css("display");
+            if(d == "none"){
+                $(".rockmenu").css("display","block");
+                $("#indexuserl").find("i").removeClass().addClass("icon-caret-up");
+            }else{
+                $(".rockmenu").css("display","none");
+                $("#indexuserl").find("i").removeClass().addClass("icon-caret-down");
+            }
+
+        });
+        $(".rockmenu").find("li").each(function(){
+            $(this).mouseenter(function(){
+               $(this).removeClass().addClass("li01").siblings("li").removeClass();
+            });
+        })
+        //打开/关闭导航
+        $(".icon-reorder").each(function () {
+            $(this).click(function () {
+                $("#indexmenu").toggle();
+                $("#indexmenuss").toggle();
+            });
+        });
+    })
+</script>

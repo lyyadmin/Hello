@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf8" />
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="/static/app/css/style.p.css" />
+		<script type="text/javascript" src="/static/app/js/public.js"></script>
+		<script type="text/javascript" src="/static/app/js/jquery-3.2.1.min.js"></script>
+		<style type="text/css">
+			.param-innerbox{
+				position: relative;
+			}
+			#param-innerbox{
+				position: relative;
+				width: 100%;
+				height: auto;
+				list-style: none;
+				margin-top: 10px;
+			}
+			.param-item{
+				width: 36%;
+				height: auto;
+				float: left;
+				margin-left: 4%;
+				margin-top: 5px;
+				padding-left: 4%;
+				padding-right: 4%;
+				padding-top: 25px;
+				padding-bottom: 25px;
+				text-align: center;
+				color: #FFFFFF;
+				border-radius: 5px;
+				font-size: 18px;
+				margin-bottom: 10px;
+			}
+		</style>
+		<script type="text/javascript">
+			function init() {
+				initVoiceAnimal();
+				var title = getTitle();
+				document.getElementById("model-title").innerHTML = title;
+				setmodelitembg(title);
+			}
+			function setmodelitembg(title){
+				var params = ["性别","年龄","身高","体重","期中1","期中2","期末","总分","模拟考试","缺席","地区","家庭","爱好","打工","等级","考级系数"]
+				var colors = ["#00625A","#163A58","#00C1B3","#A2200A","#3081C2","#8B743F"];
+				var parambox = document.getElementById("param-innerbox");
+				for(var i=0;i<params.length;i++){
+					var elem = document.createElement("li");
+					elem.innerHTML = params[i]+'</br>'+title;
+					elem.style.background = colors[parseInt(Math.random()*colors.length)];
+					parambox.appendChild(elem);
+					elem.setAttribute("class","param-item");
+					elem.setAttribute("onclick","paramclick('"+params[i]+title+"')");
+				}
+			}
+			
+			function paramclick(str){
+				window.location = "paramchart.html?param="+str;
+			}
+
+			function getTitle() {
+				var type = GetRequest()["type"];
+				var title = "模块";
+				switch(type) {
+					case "0":
+						title = "排序";
+						break;
+					case "1":
+						title = "汇总";
+						break;
+					case "2":
+						title = "均值";
+						break;
+					case "3":
+						title = "频次分析";
+						break;
+					case "4":
+						title = "趋势与预测";
+						break;
+					case "5":
+						title = "交叉表";
+						break;
+					case "6":
+						title = "数据分析图";
+						break;
+					case "7":
+						title = "相关分析";
+						break;
+					case "8":
+						title = "回归模型";
+						break;
+					case "9":
+						title = "时间序列";
+						break;
+					case "10":
+						title = "决策树";
+						break;
+					case "11":
+						title = "关联分析";
+						break;
+					default:
+						break;
+				}
+				return title;
+			}
+		</script>
+	</head>
+
+	<body onload="init()">
+		<div class="title-bar-box">
+			<div class="title-bar-title" id="model-title">模块</div>
+			<span class="title-bar-back" onclick="history.go(-1)"><img src="/static/app/img/back.png" />返回</span>
+			<!--<a class="title-bar-setting" href="models.html">设置</a>-->
+		</div>
+		<div class="home-search-box">
+			<input id="home-search-text" type="text" placeholder="请输入指令" />
+			<img class="home-search-voice" src="/static/app/img/icon_voice.png" onclick="input_voice()" />
+			<div class="home-search-btn" onclick="runAlgorithm(0)">运行</div>
+		</div>
+		<div class="param-box">
+			<ul id="param-innerbox">
+			</ul>
+		</div>
+        <div class="record_animal" id="recordBox">
+            <span>倾听中...</span></br>
+        </div>
+	</body>
+
+</html>

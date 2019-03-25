@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf8" />
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="/static/app/css/style.p.css" />
+		<script type="text/javascript" src="/static/app/js/public.js"></script>
+		<script type="text/javascript" src="/static/app/js/jquery-3.2.1.min.js"></script>
+		<style type="text/css">
+			
+		</style>
+		<script type="text/javascript">
+			function init() {
+				var title = getTitle("title");
+				document.getElementById("model-title").innerHTML = title;
+			}
+
+			function getTitle(str) {
+				var title = GetRequest()["param"];
+				if(title){
+					return decodeURI(title);
+				}
+				return str;
+			}
+		</script>
+	</head>
+
+	<body onload="init()">
+		<div class="title-bar-box">
+			<div class="title-bar-title" id="model-title">模块</div>
+			<span class="title-bar-back" onclick="history.go(-1)"><img src="/static/app/img/back.png" />返回</span>
+			<!--<a class="title-bar-setting" href="models.html">设置</a>-->
+		</div>
+		<div id="main" style="width: 100%;height: 460px;margin-top: 60px;"></div>
+		<script type="text/javascript" src="/static/app/js/echarts.js" ></script>
+			<script type="text/javascript">
+				var myChart = echarts.init(document.getElementById("main"));
+				var options = {
+					title: {
+						text: '某地区降水量',
+						subtext: '纯属虚构'
+					},
+					tooltip: {
+						trigger: 'axis'
+					},
+					legend: {
+						data: ['降水量']
+					},
+					toolbox: {
+						show: true,
+						feature: {
+							mark: {
+								show: true
+							},
+							dataView: {
+								show: true,
+								readOnly: false
+							},
+							magicType: {
+								show: true,
+								type: ['line', 'bar']
+							},
+							restore: {
+								show: true
+							},
+							saveAsImage: {
+								show: true
+							}
+						}
+					},
+					calculable: true,
+					xAxis: [{
+						type: 'category',
+						data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+					}],
+					yAxis: [{
+						type: 'value'
+					}],
+					series: [
+						{
+							name: '降水量',
+							type: 'bar',
+							data: [2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3],
+							markPoint: {
+								data: [{
+										name: '年最高',
+										value: 182.2,
+										xAxis: 7,
+										yAxis: 183
+									},
+									{
+										name: '年最低',
+										value: 2.3,
+										xAxis: 11,
+										yAxis: 3,
+										symbolSize: 38
+									}
+								]
+							},
+							markLine: {
+								data: [{
+									type: 'average',
+									name: '平均值'
+								}]
+							}
+						}
+					]
+				};
+				myChart.setOption(options);
+			</script>
+	</body>
+
+</html>

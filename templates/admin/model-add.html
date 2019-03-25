@@ -1,0 +1,335 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<!--[if lt IE 9]>
+<script type="text/javascript" src="lib/html5shiv.js"></script>
+<script type="text/javascript" src="lib/respond.min.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="/static/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="/static/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="/static/css/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="/static/css/style.css" />
+<!--[if IE 6]>
+<script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<title>添加模型</title>
+<meta name="keywords" content="voice">
+<meta name="description" content="voice">
+</head>
+<body>
+<article class="page-container">
+	<form class="form form-horizontal" id="form-admin-add">
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>模型名称：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" value="{{m['model_name']}}" placeholder="模型名称" id="modelName" name="modelName">
+		</div>
+	</div>
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3">数据库名：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<span class="select-box" style="width:200px;">
+				<select class="select" name="dataName" size="1" id="dataName">
+				{% for d in dts %}
+					<option value="{{d['db_id']}}" {% if d['db_id']==m['db_id'] %}selected{% end %}>{{d['db_name']}}</option>
+				{% end %}
+				</select>
+			</span> 
+		</div>
+	</div>
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3">算法名称：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<span class="select-box" style="width:200px;">
+				<select class="select" name="algorithName" size="1">
+				{% for al in als %}
+					<option value="{{al['cat_id']}}" {% if al['cat_id']==m['cat_id'] %} selected {% end %}>{{al['cat_name']}}</option>
+				{% end %}
+				</select>
+			</span> 
+		</div>
+	</div>
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3">表名称：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<span class="select-box" style="width:200px;">
+				<select class="select" name="tableName" size="1" id="tableName">
+				{% for tb in tbs %}
+					<option value="{{tb['name']}}" keys="{{tb['key']}}" {% if tb['name']==m['model_tablename'] %} selected {% end %}>{{tb['name']}}</option>
+				{% end %}
+				</select>
+			</span> 
+		</div>
+	</div>
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3">图表样式：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<span class="select-box" style="width:200px;">
+				<select class="select" name="chartType" size="1" id="chartType">
+				{% for ch in c %}
+					<option value="{{ch['chart_id']}}" {% if ch['chart_id']==m['show_type'] %} selected {% end %}>{{ch['chart_name']}}</option>
+				{% end %}
+				</select>
+			</span> 
+		</div>
+	</div>
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3">模型参数：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<dl class="permission-list">
+				<dt>
+					<label>
+						<input type="checkbox" value="" name="user-Character-0" id="user-Character-0">
+						全选</label>
+				</dt>
+				<dd id="tbkeys">
+				{% if m['model_tablename']=="" %}
+					{% for key in tbs[0]['key'] %}
+					<label class="" style="margin-right:10px;">
+						<input type="checkbox" value="" name="user-Character-0-0-0" id="user-Character-0-0-0" des="{{key}}" {% if key in m['model_keys'] %} checked {% end %} />
+						{{key}}</label>
+					{% end %}
+				{% else%}
+					{% for tb in tbs %}
+						{% if tb['name']==m['model_tablename'] %}
+							{% for key in tb['key'] %}
+							<label class="" style="margin-right:10px;">
+								<input type="checkbox" value="" name="user-Character-0-0-0" id="user-Character-0-0-0" des="{{key}}" {% if key in keylist %} checked {% end %} />
+								{{key}}</label>
+							{% end %}
+						{% end %}
+					{% end %}
+				
+				{% end %}
+				</dd>
+		</dl>
+		</div>
+	</div>
+	<div class="row cl" id="nichen">
+		<label class="form-label col-xs-4 col-sm-3">参数别名：</label>
+		<div class="formControls col-xs-8 col-sm-9"><dl class="permission-list">
+				<dd id="key-list">
+				{% for alia in alias %}
+				<div key="{{alia}}"  style="margin-top:5px;margin-bottom:5px;">
+					<span style="width:150px;display: inline-block;text-align: center;">{{alia}}</span>：<input type="text" class="input-text" value="{{alias[alia]}}" placeholder="参数别名" key="{{alia}}" style="width:250px;" >
+				</div>
+				{% end %}
+				</dd>
+		</dl>
+		</div>
+	</div>
+	<div class="row cl">
+		<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+			<input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+		</div>
+	</div>
+	</form>
+</article>
+
+<!--_footer 作为公共模版分离出去--> 
+<script type="text/javascript" src="/static/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="/static/js/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="/static/js/H-ui.min.js"></script>
+<script type="text/javascript" src="/static/js/H-ui.admin.js"></script>
+<!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/static/js/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="/static/js/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="/static/js/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript">
+$(function(){
+	function init(){
+		if($("#key-list div").length>0){
+			$(nichen).show();
+		}else{
+			$(nichen).hide();
+		}
+	}
+	$("#dataName").change(function(){
+		var s = $("#dataName  option:selected").text();
+		setTimeout(function(){
+			requestdata(s);
+		},500);
+	});
+	$("#tableName").change(function(){
+		var s = $("#tableName  option:selected");
+		$("#key-list").html("");
+		var txt = s.text();
+		var keys = s.attr('keys').replace(/['|\[|\]]/g, "").split(",");
+		addkeys(keys)
+	});
+	
+	function addkey_alias(key){
+		s='<div key="'+key+'"  style="margin-top:5px;margin-bottom:5px;"><span style="width:150px;display: inline-block;text-align: center;">'+key+'</span>：<input type="text" class="input-text" value="" placeholder="参数别名" key="'+key+'" style="width:250px;" ></div>';
+		$("#key-list").append(s);
+	}
+
+	$(".permission-list dt input:checkbox").click(function(){
+		$(this).closest("dl").find("dd input:checkbox").prop("checked",$(this).prop("checked"));
+		var keybox = $("#key-list");
+		if(this.checked){
+			var s = $("#tableName  option:selected");
+			var txt = s.text();
+			var keylist = s.attr('keys').replace(/['|\[|\]]/g, "").split(",");
+			for(var i=0;i<keylist.length;i++){
+				var key = keylist[i];
+				addkey_alias(key);
+			}
+			$("#nichen").show();
+		}else{
+			$(keybox).html("");
+			$("#nichen").hide();
+		}
+	});
+	$("#tbkeys input:checkbox").click(checkboxclicklistener);
+	function checkboxclicklistener(){
+		var key = $.trim($(this).attr("des"));
+		var nichen = $("#nichen");
+		var checked = this.checked;
+		if(checked){
+			addkey_alias(key);
+		}else{
+			var chs = $("#key-list div");
+			for(var i=0;i<chs.length;i++){
+				var ch = chs[i];
+				var chkey = $.trim($(ch).attr('key'));
+				if(chkey == key){
+					ch.remove();
+				}
+			}
+		}
+		if($("#key-list div").length>0){
+			$(nichen).show();
+		}else{
+			$(nichen).hide();
+		}
+	}
+	function requestdata(s){
+		$.ajax({
+			type: "POST",
+			url: "data/tablelist?dbname="+s,
+			async: false,
+			error: function(request) {
+				alert("Connection error");
+			},
+			success: function(data) {
+				var obj = JSON.parse(data);
+				var count = obj.count;
+				var select = $("#tableName");
+				select.html("");
+				if(count>0) {
+					tableinfo(obj.data,select);
+				}
+			}
+		});
+	}
+	function tableinfo(tbs,box){
+		for(var i=0;i<tbs.length;i++){
+			addtb(tbs[i],box);
+		}
+	}
+	function addtb(tb,box){
+		var s = '<option value="'+tb.name+'" keys="'+tb.key+'">'+tb.name+'</option>';
+		box.append(s);
+		addkeys(tb.key)
+	}
+	function addkeys(keys){
+		var box = $("#tbkeys");
+		box.html("");
+		var lst = "{{m['model_keys']}}";
+		var lstarr = lst.split(",");
+		var num = 0;
+		for(var j=0;j<keys.length;j++){
+			var key = $.trim(keys[j]);
+			var ipt = document.createElement("input");
+			ipt.setAttribute("name","user-Character-0-0-0");
+			ipt.setAttribute("id","user-Character-0-0-0");
+			ipt.setAttribute("des",key);
+			ipt.setAttribute("type","checkbox");
+			$(ipt).click(checkboxclicklistener);
+			var index = lstarr.indexOf(key);
+			if(index>-1){
+				ipt.setAttribute("checked",true)
+				addkey_alias(key);
+				num+=1;
+			}
+			var lb = document.createElement("label");
+			lb.setAttribute("style","margin-right:10px;");
+			lb.append(ipt)
+			lb.append(key)
+			/* s = '<label class="" style="margin-right:10px;"><input type="checkbox" value="" name="user-Character-0-0-0" id="user-Character-0-0-0" des="'+key+'" {% if '+key+' in "m['model_keys']" %} checked {% end %} />'+key+'</label>'; */
+			box.append(lb);
+		}
+		if(num>0){
+			$("#nichen").show();
+		}else{
+			$("#nichen").hide();
+		}
+	}
+	$("#form-admin-add").validate({
+		rules:{
+			modelName:{
+				required:true,
+				minlength:3,
+				maxlength:16
+			}
+		},
+		onkeyup:false,
+		focusCleanup:true,
+		success:"valid",
+		submitHandler:function(form){
+			var list = "";
+			$("#tbkeys").find("input[type='checkbox']").each(function (i) {
+				var checked = this.checked;
+				if (checked == true) {
+				    var ac = $(this).attr("des").toString();
+				    list = list + "," + ac;
+				}
+			});
+			list = list.substring(1);
+			var keylist = {};
+			var elms = $("#key-list input");
+			if(elms.length>0){
+				for(var j=0;j<elms.length;j++){
+					var key = $(elms[j]).attr("key");
+					var nichen = $(elms[j]).val();
+					keylist[key] = nichen;
+				}
+			}
+			keystr = JSON.stringify(keylist)
+			datas = {"modelKeys":list,"mid":"{{m['model_id']}}","keyalias":keystr}
+			$(form).ajaxSubmit({
+				type: 'post',
+				url: "/model/modelact?action={{do}}",
+				data:datas,
+				success: function(data){
+					res = JSON.parse(data)
+					if(res.status!="0") {
+						parent.refresh_model_list();
+						var index = parent.layer.getFrameIndex(window.name);
+						parent.layer.close(index);
+					} else {
+						layer.msg(res.msg,{icon:1,time:1000});
+					} 
+				},
+                error: function(XmlHttpRequest, textStatus, errorThrown){
+					layer.msg('error!',{icon:1,time:1000});
+					var index = parent.layer.getFrameIndex(window.name);
+					parent.layer.close(index);
+				}
+			});
+		}
+	});
+	init();
+});
+</script> 
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

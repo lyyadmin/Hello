@@ -1,0 +1,20 @@
+<aside class="Hui-aside">
+	<div class="menu_dropdown bk_2">
+		{% for menu in mns %}
+		<dl id="{{menu['m_value']}}">
+		<dt><i class="Hui-iconfont {{menu['icon']}}"></i> {{menu['m_name']}}<i class="Hui-iconfont menu_dropdown-arrow"></i></dt>
+			<dd style="">
+				<ul>
+				{% for cmenu in menu['children_menu'] %}
+					<li><a data-href="{{cmenu['data_url']}}" data-title="{{cmenu['m_name']}}" href="javascript:void(0)">{{cmenu['m_name']}}</a></li>
+				{% end %}
+				</ul>
+			</dd>
+		</dl>
+		{% end %}
+	</div>
+</aside>
+<div class="dislpayArrow hidden-xs">
+	<a class="pngfix" href="javascript:void(0);"
+		onclick="displaynavbar(this)"></a>
+</div>

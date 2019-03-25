@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>五子棋</title>
+    <link rel="stylesheet" href="/static/workflow/css/xcConfirm.css">
+    <script type="text/javascript" src="/static/workflow/js/jquery-1.12.4.js"></script>
+    <style type="text/css">
+        *{
+            margin: 0px;
+            padding: 0px;
+        }
+        body{
+            background: url("/static/workflow/images/gamebg.jpg") no-repeat;
+            font-size: 14px;
+        }
+        #header{
+            width: 100%;
+            line-height: 46px;
+            background: #3c4b5e;
+            color: #FFFFFF;
+            text-align: center;
+            font-size: 20px;
+            opacity: 0.5;
+        }
+        #left{
+            text-align:center;
+            position: absolute;
+            display: none;
+        }
+        #middle{
+            position: absolute;
+        }
+        #right{
+            text-align:center;
+            position: absolute;
+            display: none;
+        }
+        .user-img{
+            margin-top:10px;
+            height: 355px;
+        }
+        .user-id{
+            margin-top:30px;
+        }
+        .btn{
+            width: 100px;
+            line-height: 40px;
+            background: #1b6d85;
+            border-radius: 10px;
+            font-size: 22px;
+            display: block;
+            margin: 10px auto;
+            color: #FFFFFF;
+        }
+        .btn:hover{
+            cursor: default;
+        }
+        .qizi{
+            width: 100px;
+            height: 100px;
+            margin: 10px auto;
+            display: block;
+        }
+        .zhanwei{
+            position: absolute;
+            z-index: 10;
+        }
+        .zhanwei:hover{
+            background: rgba(255,0,0,0.2);
+        }
+        #pop_151798578110998236{
+            display: none;
+            font-size: 20px;
+        }
+        #waiting{
+            position: absolute;
+            font-size: 24px;
+            display: none;
+            text-align: center;
+            z-index: 0;
+        }
+        #log-info{
+            font-size: 14px;
+            background: #000000;
+            color: #FFFFFF;
+            opacity: 0.5;
+        }
+        #score{
+            position: absolute;
+            width: 100%;
+            height: 30px;
+            font-size: 30px;
+            text-align: center;
+            color: #FFFFFF;
+        }
+        #left-info,#right-info{
+            font-size: 40px;
+            text-shadow: 3px 3px #0f9ae0;
+            color: #000000;
+        }
+    </style>
+</head>
+<body>
+<div id="header"></div>
+<div id="left">
+    <div id="left-uid" class="user-id">bgbfbgb</div>
+    <img id="left-img" class="user-img" src="/static/workflow/images/girl.jpg">
+    <img class="qizi" src="/static/workflow/images/white_qizi.png">
+    <span class="btn" id="left-btn" ready="ready">准 备</span>
+    <span id="left-info"></span>
+</div>
+<div id="middle">
+</div>
+<div id="right">
+    <div id="right-uid" class="user-id">gdfdf</div>
+    <img id="right-img" class="user-img" src="/static/workflow/images/girl.jpg">
+    <img class="qizi" src="/static/workflow/images/black_qizi.png">
+    <span class="btn" id="right-btn" ready="ready">准 备</span>
+    <span id="right-info"></span>
+</div>
+<span id="waiting">思考中...</span>
+<div class="xcConfirm" id="pop_151798578110998236">
+    <div class="xc_layer"></div>
+    <div class="popBox">
+        <div class="ttBox">
+            <a class="clsBtn" id="close-dialog"></a><span class="tt">信息</span></div><div class="txtBox"><div class="bigIcon" style="background-position: 0px 0px;"></div><p id="message-box">提示文字，提示文字，提示文字，提示文字，提示文字，提示文字</p></div><div class="btnArea"><div class="btnGroup"><div class="sgBtn ok" id="start">确定</div><div class="sgBtn cancel" id="cansel">取消</div></div>
+        </div>
+    </div>
+</div>
+<div id="log-info"></div>
+<div id="score">0:0</div>
+</body>
+<script type="text/javascript">
+    (function () {
+        var maxMiao = 6;
+        var w,h,userid,zw,websocket,qurl,leftready,rightready,wscore=0,bscore=0,currentQizi,room,qiNumber=0,miao=maxMiao;
+        function init(){
+            w = $(document).width();
+            h = $(document).height();
+            userid = '{{uid}}';
+            zw = '{{room}}';
+            $("#left").css({width:(w/4)+"px",height:h-46-30,left:"0px",top:"46px"});
+            $("#middle").css({width:w/2+"px",height:h-46-30,left:(w/4)+"px",top:"46px"});
+            $("#right").css({width:(w/4)+"px",height:h-46-30,left:(w*3/4)+"px",top:"46px"});
+            $("#waiting").css({left:(w/4-w/32+w/2)+"px",top:(h/2)+"px"});
+            $("#log-info").css({width:"100%",height:(20)+"px",left:"0px",top:(h-20)+"px",position:"absolute"});
+            $("#score").css({width:"100%",height:(30)+"px",left:"0px",top:(38)+"px",position:"absolute"});
+            $("#score").html(wscore+":"+bscore);
+            $("#left-info").css({width:"100%",height:(50)+"px",left:"0px",top:(55)+"px",position:"absolute"});
+            $("#right-info").css({width:"100%",height:(50)+"px",left:"0px",top:(55)+"px",position:"absolute"});
+            $("#left-img").css("max-width",w/4+"px");
+            $("#right-img").css("max-width",w/4+"px");
+            $(document.body).css("background-size",w+"px "+h+"px");
+//            $(document).keydown(function (e) {
+//                return false;
+//            }).keypress(function (e) {
+//                return false;
+//            }).keyup(function (e) {
+//                return false;
+//            });
+            setData();
+            daojishi();
+        }
+        var pointArr;
+        function getBestPoint(btn) {
+            if(!currentQizi){
+                $("#7a7").click();
+                return false;
+            }else{
+                var qcor = zw.indexOf("right")>-1?"white":"black";
+                var mecor = zw.indexOf("left")>-1?"white":"black";
+                var ltarr = currentQizi.split("a");
+                var r = parseInt(ltarr[0]);
+                var c = parseInt(ltarr[1]);
+                var shxu = getRandom();
+                console.log(shxu)
+                var has = getClass(4,r,c,qcor,mecor,shxu);
+                if(has){
+                    has = getClass(3,r,c,qcor,mecor,shxu);
+                    if(has){
+                        has = getClass(2,r,c,qcor,mecor,shxu);
+                        if(has){
+                            has = getClass(1,r,c,qcor,mecor,shxu);
+                            if(has){
+                                has = parseInt(Math.random()*btn.length);
+                                $("#log-info").html("随机下子！");
+                                $(btn[has]).click();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        function getRandom() {
+            var arr = [1,2,3,4];
+            var num1 = parseInt(Math.random()*4);
+            var n1 = arr[num1];
+            arr.splice(num1,1);
+            var num2 = parseInt(Math.random()*3);
+            var n2 = arr[num2];
+            arr.splice(num2,1);
+            var num3 = parseInt(Math.random()*2);
+            var n3 = arr[num3];
+            arr.splice(num3,1);
+            return [n1,n2,n3,arr[0]];
+        }
+
+        function getClass(num,r,c,qcor,mecor,shxu) {
+            pointArr=[];
+            getTypeClass(num,r,c,qcor,mecor,shxu[0]);
+            getTypeClass(num,r,c,qcor,mecor,shxu[1]);
+            getTypeClass(num,r,c,qcor,mecor,shxu[2]);
+            getTypeClass(num,r,c,qcor,mecor,shxu[3]);
+            if(getGoodPoint(num)){
+                return false;
+            }
+            return true;
+        }
+        function getGoodPoint(num,qcor) {
+            var arr=[];
+            for(var i=0;i<pointArr.length;i++){
+                var point = pointArr[i];
+                var ltarr = point.split("a");
+                var r = parseInt(ltarr[0]);
+                var c = parseInt(ltarr[1]);
+                var num = getZuheNumber(num,r,c,qcor);
+                arr[i] = num;
+            }
+            var index = 0;
+            for(var j=1;j<pointArr.length;j++){
+                if(arr[j]>arr[index]){
+                    index = j;
+                }
+            }
+            if(arr.length==0 || arr[index]==0){
+                return false;
+            }else{
+                $("#"+pointArr[index]).click();
+                return true;
+            }
+        }
+        function getZuheNumber(num,r,c,qcor) {
+            var type = getNumberByType(num,r,c,qcor,1);
+            type += getNumberByType(num,r,c,qcor,2);
+            type += getNumberByType(num,r,c,qcor,3);
+            type += getNumberByType(num,r,c,qcor,4);
+            return type;
+        }
+        function getNumberByType(num,r,c,qcor,type) {
+            var n = 0,type=0;
+            for(var i=-num;i<0;i++){
+                var colwn,row;
+                if(type==1){
+                    colwn = c+i;
+                    row = r;
+                }else if(type==2){
+                    colwn = c;
+                    row = r+i;
+                }else if(type==3){
+                    colwn = c+i;
+                    row = r+i;
+                }else if(type==4){
+                    colwn = c+i;
+                    row = r-i;
+                }
+                var idstr = row+"a"+colwn;
+                if(row<0 || row>14 || colwn<0 || colwn>14){
+                    continue;
+                }
+                var qq = $("#"+idstr);
+                if(qq.attr("qizicolor")==qcor){
+                    n++;
+                }
+            }
+            if(n==num){
+                type++;
+            }
+            n = 0;
+            for(var i=1;i<=num;i++){
+                var colwn,row;
+                if(type==1){
+                    colwn = c+i;
+                    row = r;
+                }else if(type==2){
+                    colwn = c;
+                    row = r+i;
+                }else if(type==3){
+                    colwn = c+i;
+                    row = r+i;
+                }else if(type==4){
+                    colwn = c+i;
+                    row = r-i;
+                }
+                var idstr = row+"a"+colwn;
+                if(row<0 || row>14 || colwn<0 || colwn>14){
+                    continue;
+                }
+                var qq = $("#"+idstr);
+                if(qq.attr("qizicolor")==qcor){
+                    n++;
+                }
+            }
+            if(n==num){
+                type++;
+            }
+            return type;
+        }
+        function getTypeClass(num,r,c,qcor,mecor,type) {
+            var hasq=0,noq="noqi";
+            for(var i=-num;i<=num;i++){
+                var colwn,row;
+                if(type==1){
+                    colwn = c+i;
+                    row = r;
+                }else if(type==2){
+                    colwn = c;
+                    row = r+i;
+                }else if(type==3){
+                    colwn = c+i;
+                    row = r+i;
+                }else if(type==4){
+                    colwn = c+i;
+                    row = r-i;
+                }
+                var idstr = row+"a"+colwn;
+                if(row<0 || row>14 || colwn<0 || colwn>14){
+                    continue;
+                }
+                var qq = $("#"+idstr);
+                if(qq){
+                    if(qq.attr("qizicolor")==qcor){
+                        hasq++;
+                    }else if(qq.attr("qizicolor")=="noqi"){
+                        noq=idstr;
+                    }else if(qq.attr("qizicolor")==mecor){
+                        hasq=0;
+                        noq="noqi";
+                    }
+                }
+                if(hasq==num && noq!="noqi"){
+                    pointArr[pointArr.length] = noq;
+                }
+            }
+        }
+        function daojishi() {
+            if(leftready && rightready){
+                if (miao < 1) {
+                    var btn = $("[qizicolor='noqi']");
+                    if (btn && btn.length>0) {
+                        getBestPoint(btn);
+                    }
+                }else{
+                    miao--;
+                }
+                $("#waiting").html("<font color='#FF0000' size='25px'><b>"+miao + "</b></font>秒<br/>思考中...");
+            }
+            setTimeout(daojishi,1000)
+        }
+        function setData() {
+            if(zw && userid){
+                if(zw.indexOf("left")>-1){
+                    $("#left-uid").html(userid);
+                    $("#left-btn").click(function () {
+                        var rd = $(this).attr("ready");
+                        websocket.send("user:left:btn:"+rd);
+                    });
+                }else{
+                    $("#right-uid").html(userid);
+                    $("#right-btn").click(function () {
+                        var rd = $(this).attr("ready");
+                        websocket.send("user:right:btn:"+rd);
+                    });
+                }
+            }
+        }
+        var size,top,left,itemSize,please="white";
+        function addgezi() {
+            size = h-46-30-50;
+            top = (h-size)/2-30;
+            left = (w/2-size)/2;
+            itemSize = size/14;
+            var sdiv = '<svg xmlns="http://www.w3.org/2000/svg" width="'+(size+2)+'" height="'+size+'" version="1.1" style="position: absolute;left: '+left+'px;top: '+top+'px;">';
+            for(var i=0;i<15;i++){
+                sdiv += '<line x1="'+(0)+'" y1="'+(i*itemSize)+'" x2="'+size+'" y2="'+(i*itemSize)+'" style="stroke:#000000;stroke-width:1" />';
+            }
+            for(var j=0;j<15;j++){
+                sdiv += '<line x1="'+(j*itemSize+1.5)+'" y1="'+(0)+'" x2="'+j*itemSize+'" y2="'+(size)+'" style="stroke:#000000;stroke-width:1" />';
+            }
+            sdiv += '</svg>';
+            $("#middle").html(sdiv);
+            for(var l=0;l<15;l++){
+                for(var m=0;m<15;m++){
+                    var dv = document.createElement("div");
+                    dv.className="zhanwei";
+                    var lt = (left+m*itemSize-itemSize/2)+"px";
+                    var tp = (top+l*itemSize-itemSize/2)+"px";
+                    $(dv).css({width:(itemSize)+"px",height:(itemSize)+"px",left:lt,top:tp});
+                    $(dv).css("border-radius",(itemSize/2)+"px");
+                    $(dv).attr("id",l.toString()+"a"+m.toString() );
+                    $(dv).attr("qizicolor","noqi");
+                    $("#middle").append(dv)
+                }
+            }
+            $(".zhanwei").each(function () {
+                $(this).click(function () {
+                    if(this.children.length>0){
+                        return;
+                    }
+                    if(leftready && rightready){
+                        var idstr = $(this).attr("id");
+                        if(zw && userid){
+                            if(zw.indexOf("left")>-1 && please=="black"){
+                                websocket.send("user:left:qizi:"+idstr+":"+qurl+":white");
+                            }else if(zw.indexOf("right")>-1 && please=="white"){
+                                websocket.send("user:right:qizi:"+idstr+":"+qurl+":black");
+                            }
+                        }
+                    }
+                });
+            });
+        }
+        function connectServer() {
+            var wsUri = "ws://{{host}}/game/comeinroom";
+            websocket = new WebSocket(wsUri);
+            websocket.onopen = function (evt) {
+                if(!room){
+                    room = zw.substr(zw.indexOf("room"));
+                }
+                $("#header").html("("+userid+")进入房间"+zw.substr(zw.indexOf("room")+4,1));
+                websocket.send("ready:"+userid+",zw:"+zw);
+                if(zw.indexOf("left")>-1){
+                    qurl = "/static/workflow/images/whiteq.png";
+                }else if(zw.indexOf("right")>-1){
+                    qurl = "/static/workflow/images/blackq.png";
+                }
+            };
+            websocket.onclose = function (evt) {
+
+            };
+            websocket.onmessage = function (evt) {
+                var da = evt.data;
+//                $("#log-info").html(da);
+                if(da.indexOf("close:leftroom")==0 && da.indexOf(room)>-1){
+                    var info = da.split(":");
+                    $("#left-uid").html("?");
+                    $("#left").hide();
+                    $("#message-box").html(info[2]+"已离开房间！");
+                    $("#waiting").hide();
+                    please="white";
+                    wscore=0;
+                    clearstatus();
+                }else if(da.indexOf("close:rightroom")==0 && da.indexOf(room)>-1){
+                    var info = da.split(":");
+                    $("#right-uid").html("?");
+                    $("#right").hide();
+                    $("#message-box").html(info[2]+"已离开房间！");
+                    $("#waiting").hide();
+                    please="white";
+                    bscore=0;
+                    clearstatus();
+                }else if(da.indexOf("leftroom")==0 && da.indexOf(room)>-1){
+                    var mg = da.split(":");
+                    $("#left-uid").html(mg[1]);
+                    $("#left").show();
+                    if(zw.indexOf("left")>-1){
+                        $("#left-img").css("border","solid 5px #1b6d85");
+                        $("#left-info").html("我");
+                        $("#right-info").html("对方");
+                    }
+                    if(mg[2]=="ready"){
+                        $("#left-btn").css("background", "#AAAAAA");
+                        $("#left-btn").html("已准备");
+                        $("#left-btn").attr("ready", "onready");
+                        leftready = "on";
+                    }
+                }else if(da.indexOf("rightroom")==0 && da.indexOf(room)>-1){
+                    var mg = da.split(":");
+                    $("#right-uid").html(mg[1]);
+                    $("#right").show();
+                    if(zw.indexOf("right")>-1){
+                        $("#right-img").css("border","solid 5px #1b6d85");
+                        $("#right-info").html("我");
+                        $("#left-info").html("对方");
+                    }
+                    if(mg[2]=="ready"){
+                        $("#right-btn").css("background", "#AAAAAA");
+                        $("#right-btn").html("已准备");
+                        $("#right-btn").attr("ready", "onready");
+                        rightready = "on";
+                    }
+                }else if(da.indexOf("user:")==0){
+                    var info = da.split(":");
+                    if(info.length>=4){
+                        if(info[2] == "btn"){
+                            if(info[3] == "ready"){
+                                $("#"+info[1]+"-btn").css("background","#AAAAAA");
+                                $("#"+info[1]+"-btn").html("已准备");
+                                $("#"+info[1]+"-btn").attr("ready","onready");
+                                if(info[1]=="left"){
+                                    leftready="on";
+                                }else if(info[1]=="right"){
+                                    rightready="on";
+                                }
+                            }else if(info[3] == "onready"){
+                                $("#"+info[1]+"-btn").css("background","#1b6d85");
+                                $("#"+info[1]+"-btn").html("准备");
+                                $("#"+info[1]+"-btn").attr("ready","ready");
+                                if(info[1]=="left"){
+                                    leftready=undefined;
+                                }else if(info[1]=="right"){
+                                    rightready=undefined;
+                                }
+                            }
+                            if(leftready && rightready){
+                                $("#waiting").show();
+                            }else{
+                                $("#waiting").hide();
+                            }
+                        }else if(info[2] == "qizi"){
+                            var im = document.createElement("img");
+                            im.className = "clearqizi";
+                            $(im).attr("src",info[4]);
+                            $(im).css({width:itemSize*3/4+"px",height:itemSize*3/4+"px",left:itemSize/8,top:itemSize/8,position:"absolute"});
+
+                            $("#"+info[3]).append(im);
+                            please = info[5];
+                            $("#"+info[3]).attr("qizicolor",info[5]);
+                            if(info[1]=="right"){
+                                $("#waiting").css("left",(w/4-w/32)+"px");
+                            }else{
+                                $("#waiting").css("left",(w/4-w/32+w/2)+"px");
+                            }
+                            miao=maxMiao;
+                            if(currentQizi){
+                                $("#"+currentQizi).css("background","rgba(255,255,255,0)");
+                            }
+                            currentQizi = info[3];
+                            $("#"+currentQizi).css("background","#FF0000");
+                            qiNumber++;
+                            resault(please,info[3]);
+                        }else if(info[2] == "yingla"){
+                            if(zw.indexOf("left")>-1){
+                                $("#left-btn").click();
+                            }else{
+                                $("#right-btn").click();
+                            }
+                            var huo = "对方";
+                            if(info[1]==userid){
+                                huo = "我";
+                            }
+                            if(info[1]=="heqi"){
+                                $("#message-box").html("未分出胜负，还要来一场比赛吗？");
+                            }else{
+                                $("#message-box").html("【"+huo+"】胜利啦，还要来一场比赛吗？");
+                                if(info[3]=="black"){
+                                    bscore++;
+                                }else{
+                                    wscore++;
+                                }
+                                $("#score").html(wscore+":"+bscore);
+                            }
+                            $("#pop_151798578110998236").show();
+                            leftready = undefined;
+                            rightready = undefined;
+                            $("#"+currentQizi).css("background","rgba(255,255,255,0)");
+                            currentQizi = undefined;
+                        }else if(info[2] == "status"){
+                            if(info[3]=="restart"){
+                                if(info[1]=="left"){
+                                    leftready = "on";
+                                }else if(info[1]=="right"){
+                                    rightready = "on";
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            websocket.onerror = function (evt) {
+                console.log("onerror");
+            };
+        }
+        function just(arr,c) {
+            var n = 0;
+            for(var g=0;g<arr.length;g++){
+                var idstr = arr[g];
+                var color = $("#"+idstr).attr("qizicolor");
+                if(color && color == c){
+                    n++;
+                }else{
+                    n=0;
+                }
+                if(n==5){
+                    return true;
+                }
+            }
+            return false;
+        }
+        function resault(p,lt) {
+            var can;
+            if(zw.indexOf("left")>-1 && p=="white"){
+                can = "white";
+            }else if(zw.indexOf("right")>-1 && p=="black"){
+                can = "black";
+            }
+            if(can){
+                var ltarr = lt.split("a");
+                var r = parseInt(ltarr[0]);
+                var c = parseInt(ltarr[1]);
+                var panduan = [];
+                for(var i=-4;i<=4;i++){
+                    var cc = c+i;
+                    panduan[panduan.length] = ltarr[0]+"a"+cc.toString();
+                }
+                if(just(panduan,can)==true){
+                    websocket.send("user:"+userid+":yingla:"+can);
+                    return;
+                }
+                panduan = [];
+                for(var j=-4;j<=4;j++){
+                    var cc = r+j;
+                    panduan[panduan.length] = cc.toString()+"a"+ltarr[1];
+                }
+                if(just(panduan,can)==true){
+                    websocket.send("user:"+userid+":yingla:"+can);
+                    return;
+                }
+                panduan = [];
+                for(var h=-4;h<=4;h++){
+                    var cc = r+h;
+                    var dd = c+h;
+                    panduan[panduan.length] = cc.toString()+"a"+dd.toString();
+                }
+                if(just(panduan,can)==true){
+                    websocket.send("user:"+userid+":yingla:"+can);
+                    return;
+                }
+                panduan = [];
+                for(var h=-4;h<=4;h++){
+                    var cc = r-h;
+                    var dd = c+h;
+                    panduan[panduan.length] = cc.toString()+"a"+dd.toString();
+                }
+                if(just(panduan,can)==true){
+                    websocket.send("user:"+userid+":yingla:"+can);
+                    return;
+                }
+                if(qiNumber==15*15){
+                    websocket.send("user:heqi:yingla:"+can);
+                    return;
+                }
+            }
+        }
+        function initevent() {
+            $("#start").click(function () {
+                $("#pop_151798578110998236").hide();
+                clearstatus();
+                 if(zw.indexOf("left")>-1){
+                     websocket.send("user:left:status:restart");
+                     $("#left-btn").click();
+                 } else if (zw.indexOf("right") > -1) {
+                     websocket.send("user:right:status:restart");
+                     $("#right-btn").click();
+                 }
+            });
+            $("#cansel").click(function () {
+                $("#pop_151798578110998236").hide();
+                window.history.back();
+            });
+            $("#close-dialog").click(function () {
+                $("#pop_151798578110998236").hide();
+                window.history.back();
+            });
+        }
+        function clearstatus() {
+            $(".clearqizi").remove();
+            $(".zhanwei").attr("qizicolor","noqi");
+            $("#log-info").html("清除数据!");
+            qiNumber=0;
+            if (currentQizi) {
+                $("#" + currentQizi).css("background", "rgba(255,255,255,0)");
+            }
+        }
+        init();
+        addgezi();
+        connectServer();
+        initevent();
+    })();
+</script>
+</html>

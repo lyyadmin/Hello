@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf8" />
+		<meta charset="UTF-8">
+		<title>登录</title>
+		<link rel="stylesheet" href="/static/app/css/style.p.css" />
+		<script type="text/javascript" src="/static/app/js/public.js" ></script>
+		<style type="text/css">
+			body{
+				background: #EEEEEE;
+			}
+			.login-box{
+				position: absolute;
+				width: 80%;
+				height: auto;
+				margin-top: 50px;
+				margin-left: 10%;
+			}
+			.login-box input{
+				width: 95%;
+				height: 40px;
+				display: block;
+				margin: 20px auto;
+				border-radius: 5px;
+				padding-left: 5%;
+				border: solid 1px #999999;
+				outline: solid 1px rgba(0,0,0,0);
+			}
+			.login-box input:focus{
+				border: solid 1px #088CB7;
+				outline: solid 1px rgba(0,0,0,0);
+			}
+			.login-submit{
+				width: 100%;
+				height: 40px;
+				background: #088CB7;
+				border: solid 1px #088CB7;
+				color: #FFFFFF;
+				line-height: 40px;
+				text-align: center;
+				border-radius: 5px;
+			}
+			.login-submit:hover{
+				background: #389CB7;
+				cursor: default;
+			}
+		</style>
+		<script type="text/javascript">
+			function login(){
+				var user = document.getElementById("login-user").value;
+				var pwd = document.getElementById("login-pwd").value;
+				if(user==""){
+					toast("用户名不能为空");
+					return;
+				}
+				if(pwd==""){
+					toast("密码不能为空");
+					return;
+				}
+				$("#user_login").click(function(){
+			        var user = $("#login-user").val();
+			        var pwd = $("#login-pwd").val();
+			    	$.ajax({
+						type: 'POST',
+						url: "/user/verification",
+						data:{"username":user,"password":pwd},
+						dataType: 'json',
+						success: function(data) {
+			            	var status = data.status;
+			            	if(status=='0'){
+								layer.msg(data.message,{icon:1,time:2000});
+			            	}else{
+			    				localStorage.setItem("clickitem",'home');
+			            		window.location = "main.html";
+			            	}
+						},
+						error: function(data) {
+							console.log(data.msg);
+						},
+					});
+			    });
+			}
+			function init(){
+				setTimeout(function(){
+					document.getElementById("login-user").value = "lili";
+					setTimeout(function(){
+						document.getElementById("login-pwd").value = "111111";
+						setTimeout(function(){
+							login();
+						},500);
+					},500);
+				},500);
+			}
+		</script>
+	</head>
+	<body onload="init()">
+		<div class="title-bar-box">
+			<!--<span class="title-bar-back" onclick="javascript:history.go(-1)"><img src="/static/app/img/back.png" />返回</span>-->
+			<div class="title-bar-title">登录</div>
+			<!--<span class="title-bar-setting">设置</span>-->
+		</div>
+		<div class="login-box">
+			<input id="login-user" type="text" name="user_name"  placeholder="请输入用户名"/>
+			<input id="login-pwd" type="password" name="user_pwd" placeholder="请输入密码" />
+			<div id="user_login" class="login-submit" onclick="login()">登录</div>
+		</div>
+		<script type="text/javascript" src="/static/js/jquery-1.9.1.min.js"></script>
+		<script type="text/javascript" src="/static/js/layer/2.4/layer.js"></script>
+	</body>
+</html>

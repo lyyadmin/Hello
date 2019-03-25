@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf8" />
+		<meta charset="UTF-8">
+		<title>手势解锁</title>
+		<link rel="stylesheet" href="/static/app/css/style.p.css" />
+		<script type="text/javascript" src="/static/app/js/jquery-3.2.1.min.js"></script>
+		<script type="text/javascript" src="/static/app/js/jquery.gesture.password.js"></script>
+		<script type="text/javascript" src="/static/app/js/public.js"></script>
+		<style type="text/css">
+			.lock-box {
+				width: 100%;
+				height: auto;
+				position: relative;
+				margin-top: 150px;
+			}
+			
+			#gesturepwd {
+				margin: 20px auto;
+			}
+			.lock-tip{
+				margin-top: 350px;
+				font-size: 20px;
+				color: #088CB7;
+			}
+		</style>
+		<script type="text/javascript">
+			function init() {
+				if(password) {
+					toast("请解锁密码");
+					$("#unlocking").show();
+				} else {
+					toast("请设置密码");
+					$("#setting").show();
+				}
+			}
+		</script>
+	</head>
+
+	<body onload="init()">
+		<div class="title-bar-box">
+			<!--<span class="title-bar-back"><img src="/static/app/img/back.png" />返回</span>-->
+			<div class="title-bar-title">手势解锁</div>
+			<span class="title-bar-setting"><a href="login.html">密码解锁</a></span>
+		</div>
+		<div class="lock-box">
+			<div id="gesturepwd"></div>
+		</div>
+
+		<!--<script src="/static/app/dist/js/danmuplayer.min.js"></script>-->
+		<script>
+			var password = localStorage.getItem("hasPassword");
+			var pwd;
+			$("#gesturepwd").GesturePasswd({
+				backgroundColor: "#FFFFFF", //背景色
+				color: "#088CB7", //主要的控件颜色
+				roundRadii: 25, //大圆点的半径
+				pointRadii: 6, //大圆点被选中时显示的圆心的半径
+				space: 30, //大圆点之间的间隙
+				width: 240, //整个组件的宽度
+				height: 240, //整个组件的高度
+				lineColor: "#00aec7", //用户划出线条的颜色
+				zindex: 100 //整个组件的css z-index属性
+			});
+			$("#gesturepwd").on("hasPasswd", function(e, passwd) {
+				var result;
+				if(password) {
+					if(passwd == password) {
+
+						result = true;
+					} else {
+						result = false;
+					}
+
+					if(result == true) {
+						$("#gesturepwd").trigger("passwdRight");
+						window.location = "main.html";
+					} else {
+						$("#gesturepwd").trigger("passwdWrong");
+
+						//密码验证错误后的其他操作。。。
+						toast("密码错误！")
+					}
+				} else {
+					$("#gesturepwd").trigger("passwdRight");
+					if(pwd) {
+						if(pwd == passwd) {
+							alert("密码设置成功");
+							password = passwd;
+							localStorage.setItem("hasPassword", password);
+						} else {
+							alert("两次密码不一致，请重新设置");
+							pwd = undefined;
+						}
+					} else {
+						pwd = passwd;
+						toast("请再次输入密码");
+					}
+				}
+			});
+		</script>
+
+		<div style="position:relative;text-align:center;top: 0px;">
+			<span id="setting" class="lock-tip" style="display: none;">设置密码
+			</span>
+			<span id="unlocking" class="lock-tip" style="display: none;">手动解锁
+			</span>
+		</div>
+	</body>
+
+</html>

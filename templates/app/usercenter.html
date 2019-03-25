@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf8" />
+		<meta charset="UTF-8">
+		<title>个人中心</title>
+		<link rel="stylesheet" href="/static/app/css/style.p.css" />
+		<script type="text/javascript" src="/static/app/js/public.js"></script>
+		<script type="text/javascript" src="/static/app/js/jquery-3.2.1.min.js"></script>
+		<style type="text/css">
+			.userinfo-list{
+				margin-top: 50px;
+			}
+			.userinfo-list-box{
+				list-style: none;
+			}
+			.mine-userinfo-item {
+				width: 95%;
+				height: 45px;
+				position: relative;
+				line-height: 45px;
+				padding-left: 5%;
+				background: #FFFFFF;
+				margin-top: 1px;
+				font-size: 14px;
+				color: #333333;
+				border-bottom: solid 1px #DDDDDD;
+			}
+			
+			.mine-userinfo-item:hover {
+				background: #eeeeee;
+				cursor: default;
+			}
+			.mine-userinfo-item span {
+				width: auto;
+				height: 45px;
+				line-height: 45px;
+				position: absolute;
+				right: 5%;
+				font-size: 13px;
+				color: #666666;
+			}
+		</style>
+		<script type="text/javascript">
+			function init() {
+
+			}
+		</script>
+	</head>
+
+	<body onload="init()">
+		<div class="title-bar-box">
+			<div class="title-bar-title">个人中心</div>
+			<span class="title-bar-back" onclick="history.go(-1)"><img src="/static/app/img/back.png" />返回</span>
+			<a class="title-bar-setting" href="modifyuserinfo.html">修改</a>
+		</div>
+		<div class="userinfo-list">
+			<ul class="userinfo-list-box">
+				<li class="mine-userinfo-item">昵称：<span>阿狸</span></li>
+				<li class="mine-userinfo-item">姓名：<span>张三</span></li>
+				<li class="mine-userinfo-item">性别：<span>男</span></li>
+				<li class="mine-userinfo-item">年龄：<span>28</span></li>
+				<li class="mine-userinfo-item">爱好：<span>旅游，运动</span></li>
+				<li class="mine-userinfo-item">个性签名：<span>做最好的自己</span></li>
+			</ul>
+		</div>
+	</body>
+
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf8" />
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="/static/app/css/style.p.css" />
+		<script type="text/javascript" src="/static/app/js/public.js"></script>
+		<script type="text/javascript" src="/static/app/js/jquery-3.2.1.min.js"></script>
+		<style type="text/css">
+			.model-innerbox {
+				position: relative;
+			}
+			
+			.model-innerbox {
+				position: relative;
+				width: 100%;
+				height: auto;
+				margin-top: 10px;
+				list-style: none;
+			}
+			
+			.model-item {
+				width: 30%;
+				height: 100px;
+				float: left;
+				margin-left: 2.5%;
+				margin-top: 5px;
+				margin-bottom: 10px;
+				text-align: center;
+				line-height: 100px;
+				color: #FFFFFF;
+				border-radius: 5px;
+				font-size: 18px;
+			}
+		</style>
+		<script type="text/javascript">
+			function init() {
+				initVoiceAnimal();
+				setmodelitembg();
+			}
+
+			function setmodelitembg() {
+				var boxs = document.getElementsByClassName("model-item");
+				var colors = ["#00625A", "#163A58", "#00C1B3", "#A2200A", "#3081C2", "#8B743F", "#00625A", "#163A58", "#00C1B3", "#A2200A", "#3081C2", "#8B743F"];
+				for(var i = 0; i < boxs.length; i++) {
+					boxs[i].style.background = colors[i];
+				}
+			}
+
+			function modelinfo(type,name) {
+				window.location = "model.html?type=" + type;
+			}
+		</script>
+	</head>
+
+	<body onload="init()">
+		<div class="title-bar-box">
+			<div class="title-bar-title">模块列表</div>
+			<span class="title-bar-back" onclick="history.go(-1)"><img src="/static/app/img/back.png" />返回</span>
+			<!--<a class="title-bar-setting" href="models.html">设置</a>-->
+		</div>
+		<div class="home-search-box">
+			<input id="home-search-text" type="text" placeholder="请输入指令" />
+			<img class="home-search-voice" src="/static/app/img/icon_voice.png" onclick="input_voice()" />
+			<div class="home-search-btn" onclick="runAlgorithm(0)">运行</div>
+		</div>
+		<div class="model-box">
+			<ul class="model-innerbox" id="model-innerbox">
+				<li class="model-item" onclick="modelinfo('0')">排序</li>
+				<li class="model-item" onclick="modelinfo('1')">汇总</li>
+				<li class="model-item" onclick="modelinfo('2')">均值</li>
+				<li class="model-item" onclick="modelinfo('3')">频次分析</li>
+				<li class="model-item" onclick="modelinfo('4')">趋势与预测</li>
+				<li class="model-item" onclick="modelinfo('5')">交叉表</li>
+				<li class="model-item" onclick="modelinfo('6')">数据分析图</li>
+				<li class="model-item" onclick="modelinfo('7')">相关分析</li>
+				<li class="model-item" onclick="modelinfo('8')">回归模型</li>
+				<li class="model-item" onclick="modelinfo('9')">时间序列</li>
+				<li class="model-item" onclick="modelinfo('10')">决策树</li>
+				<li class="model-item" onclick="modelinfo('11')">关联分析</li>
+			</ul>
+		</div>
+		<div class="record_animal" id="recordBox">
+			<span>倾听中...</span></br>
+		</div>
+		<script type="text/javascript">
+			$(function() {
+				function model_load() {
+					$.ajax({
+						type: "POST",
+						url: "/app/modellist",
+						data:{"userName":"lyy"},
+						async: false,
+						error: function(request) {
+							alert("Connection error");
+						},
+						success: function(data) {
+							var obj = JSON.parse(data);
+							var count = obj.count;
+							var add = obj.add;
+							if(count > 0) {
+								addmodelsinfo(obj.data);
+							} else {
+								removeAllChild("model-innerbox");
+							}
+						}
+					});
+				}
+
+				function addmodelsinfo(users) {
+					var list = $("#model-innerbox");
+					removeAllChild("model-innerbox")
+					for(var i = 0; i < users.length; i++) {
+						list.append(createChildView(i + 1, users[i]))
+					}
+					setmodelitembg();
+				}
+
+				function createChildView(i, m) {
+					var per = m.model_per;
+					var _li = document.createElement("li");
+					_li.innerHTML = m.model_name;
+					_li.setAttribute("class", "model-item");
+					_li.setAttribute("onclick", "modelinfo('"+i+"','"+m.model_name+"')");
+			//		_li.click = modelinfo(i,m.model_name);
+					return _li;
+				}
+				function removeAllChild(id){  
+				    var div = document.getElementById(id);  
+				    while(div.hasChildNodes()){ //当div下还存在子节点时 循环继续  
+				        div.removeChild(div.firstChild);  
+				    }  
+				}  
+				model_load();
+			});
+		</script>
+	</body>
+
+</html>

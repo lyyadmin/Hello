@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>马克威分析系统V8.0</title>
+    	<link rel="stylesheet" href="/static/workflow/css/index.css" />
+		<script type="text/javascript" src="/static/workflow/js/jquery-1.12.4.js"></script>
+    	<script src="/static/workflow/js/jquery.easyui.min.js" type="text/javascript"></script>
+    	<script type="text/javascript" src="/static/workflow/js/test.js" ></script>
+		<script type="text/javascript" src="/static/js/layer/2.4/layer.js"></script>
+		<script type="text/javascript" src="/static/js/jquery.base64.js"></script>
+		<script type="text/javascript">
+			window.host = "{{host}}";
+		</script>
+	</head>
+
+	<body>
+		<div class="m-header">
+			<img class="m-logo" src="/static/workflow/images/markway_title.png">
+			<span class="m_help">帮助</span>
+			<img class="m_arrow" id="dropdown-menu" src="/static/workflow/images/m_arrow_down.png" />
+			<span class="m_nichen" id="m-nichen">wlx</span>
+			<img class="m_photo" id="m-photo-img" src="/static/workflow/images/m_photo.png" />
+		</div>
+		<div class="m-content">
+			<div class="m-left-menu" id="left-menu">
+				<div class="m-menu" id="toggle_left_memu">
+					<img src="/static/workflow/images/m_menu.png" />
+				</div>
+				<div class="m-menu-item m-menu-item-selected">
+					<img src="/static/workflow/images/m_icon1.png" />
+				</div>
+				<div class="m-menu-item">
+					<img src="/static/workflow/images/m_icon2.png" />
+				</div>
+				<div class="m-menu-item">
+					<img src="/static/workflow/images/m_icon3.png" />
+				</div>
+			</div>
+			<div class="m-right-content" id="right-content">
+				<div class="m-algorith-menu" id="content-left-menu">
+					<div class="m_algorith_library">算法库</div>
+					<div class="m_data_process">数据处理</div>
+					<div class="m_data_process_menu">
+						<ul class="m_data_process_menu_ul">
+							<li class="m_data_process_menu_li" method="duoweichaxun">
+								<img class="m_data_process_menu_icon" src="/static/workflow/images/m_algorith_icon1.png" />
+								<span class="m_data_process_menu_font">多维查询</span>
+							</li>
+							<li class="m_data_process_menu_li m_data_process_menu_li_selected" method="shujvchonggou">
+								<img class="m_data_process_menu_icon" src="/static/workflow/images/m_algorith_icon1_focus.png" />
+								<span class="m_data_process_menu_font">数据重构</span>
+							</li>
+							<li class="m_data_process_menu_li" method="fenleihuizong">
+								<img class="m_data_process_menu_icon" src="/static/workflow/images/m_algorith_icon1.png" />
+								<span class="m_data_process_menu_font">分类汇总</span>
+							</li>
+							<li class="m_data_process_menu_li" method="hangliezhuanhuan">
+								<img class="m_data_process_menu_icon" src="/static/workflow/images/m_algorith_icon1.png" />
+								<span class="m_data_process_menu_font">行列转换</span>
+							</li>
+							<li class="m_data_process_menu_li" method="jiluhebing">
+								<img class="m_data_process_menu_icon" src="/static/workflow/images/m_algorith_icon2.png" />
+								<span class="m_data_process_menu_font">记录合并</span>
+							</li>
+							<li class="m_data_process_menu_li" method="bianliangheji">
+								<img class="m_data_process_menu_icon" src="/static/workflow/images/m_algorith_icon2.png" />
+								<span class="m_data_process_menu_font">变量合并</span>
+							</li>
+							<li class="m_data_process_menu_li" method="bianliangleixingxiugai">
+								<img class="m_data_process_menu_icon" src="/static/workflow/images/m_algorith_icon2.png" />
+								<span class="m_data_process_menu_font">变量类型修改</span>
+							</li>
+							<li class="m_data_process_menu_li" method="xianxinghuigui">
+								<img class="m_data_process_menu_icon" src="/static/workflow/images/m_algorith_icon2.png" />
+								<span class="m_data_process_menu_font">线性回归</span>
+							</li>
+						</ul>
+					</div>
+					<div class="m_data_process">高级统计</div>
+					<div class="m_data_process_menu">
+						<ul class="m_data_process_menu_ul">
+							<li class="m_data_process_menu_li" method="xianxinghuigui">
+								<img class="m_data_process_menu_icon" src="/static/workflow/images/m_algorith_icon3.png" />
+								<span class="m_data_process_menu_font">线性回归</span>
+							</li>
+							<li class="m_data_process_menu_li" method="jiaochabiao">
+								<img class="m_data_process_menu_icon" src="/static/workflow/images/m_algorith_icon4.png" />
+								<span class="m_data_process_menu_font">交叉表</span>
+							</li>
+							<li class="m_data_process_menu_li" method="pincifenxi">
+								<img class="m_data_process_menu_icon" src="/static/workflow/images/m_algorith_icon4.png" />
+								<span class="m_data_process_menu_font">频率分析</span>
+							</li>
+							<li class="m_data_process_menu_li" method="youxuhuigui">
+								<img class="m_data_process_menu_icon" src="/static/workflow/images/m_algorith_icon4.png" />
+								<span class="m_data_process_menu_font">有序回归</span>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div class="m_work_flow" id="work_flow">
+					<img src="/static/workflow/images/m_work_flow.png" /><span>工作流</span><hr/>
+					<ul class="m-little-icon">
+						<li style="border: solid 1px #0093fd;"><img src="/static/workflow/images/m_little_icon1.png" /></li>
+						<li style="border: solid 1px #fd5d00;"><img src="/static/workflow/images/m_little_icon2.png" /></li>
+						<li style="border: solid 1px #67798d;"><img src="/static/workflow/images/m_little_icon3.png" /></li>
+						<li style="border: solid 1px #48aaed;"><img src="/static/workflow/images/m_little_icon4.png" /></li>
+						<li style="border: solid 1px #d7414b;"><img src="/static/workflow/images/m_little_icon5.png" /></li>
+						<li style="border: solid 1px #9fc62d;"><img src="/static/workflow/images/m_little_icon6.png" /></li>
+					</ul>
+					<div id="m_flow">
+						<div id="drag_view"></div>
+					</div>
+				</div>
+				<div class="m-algorith-info-little_menu" id="right-lille-menu">
+					<div class="m_algorith_little_menu">
+						<div class="m_icon_little">
+							<img src="/static/workflow/images/arrow_r_right.png" id="little-hide-params-setting"/>
+							<img src="/static/workflow/images/closed.png" id="little-closed" />
+						</div>
+					</div>
+					<img class="little_menu_icon" src="/static/workflow/images/m_algorith_icon1.png" id="show-right-menu"  />
+				</div>
+				<div class="m-algorith-info" id="content-right-menu">
+					<div class="m_algorith_item">
+						分类汇总
+						<span class="m_icon">
+							<img src="/static/workflow/images/arrow_r_right.png" id="hide-params-setting"/>
+							<img src="/static/workflow/images/closed.png" id="closed" />
+						</span>
+					</div>
+					<div class="m_data_process">
+						<ul class="m-data_set">
+							<li class="m-data-set-item m-data-select-item" tab="select_datasource">选择数据源</li>
+							<li class="m-data-set-item" tab="parameter_setting">参数设置</li>
+							<li class="m-data-set-item" tab="select_function">选择函数</li>
+						</ul>
+					</div>
+					<div id="select_datasource" class="m-param-set-item-menu">
+						<div class="m-param">
+							<div class="m-param-item">驱动类型：
+							<select id="m-driver">
+								<option value="mysql">mysql</option>
+								<option value="oracle">oracle</option>
+								<option value="Sqlserver">Sql server</option>
+								<option value="informix">informix</option>
+								<option value="Sybase">Sybase</option>
+								<option value="db2">DB2</option>
+								<option value="postgresql">PostgreSQL</option>
+								<option value="access">Access</option>
+								<option value="foxpro">FoxPro</option>
+							</select>
+							</div>
+							<div class="m-param-item">
+								<span>服务名：</span>
+								<input type="text" id="m-host" value="localhost"/>
+							</div>
+							<div class="m-param-item">
+								<span>端口号：</span>
+								<input type="text" id="m-port" value="3306"/>
+							</div>
+							<div class="m-param-item">
+								<span>数据库：</span>
+								<input type="text" id="m-database" value="markway"/>
+							</div>
+							<div class="m-param-item">
+								<span>用户名：</span>
+								<input type="text"  id="m-user" value="root"/>
+							</div>
+							<div class="m-param-item">
+								<span>密码：</span>
+								<input type="text" id="m-password" value="root"/>
+							</div>
+							<input id="m-connect" type="button" value="连接"/>
+						</div>
+						<table class="m-param-setting">
+							<tr>
+								<td class="table-left">
+									<span>选择表：</span>
+									<select id="select-tables">
+										<option value="table1">User</option>
+										<option value="table2">表二</option>
+										<option value="table3">表三</option>
+										<option value="table4">表四</option>
+										<option value="table5">表五</option>
+										<option value="table6">表六</option>
+									</select>
+									<span>选择字段：</span>
+									<select multiple="2" id="text-area-left">
+										<option value="name">name</option>
+										<option value="age">age</option>
+										<option value="sex">sex</option>
+										<option value="weight">weight</option>
+										<option value="height">height</option>
+										<option value="love">love</option>
+									</select>
+								</td>
+								<td class="table-middle">
+									<div class="middle-button" style="background: url(/static/workflow/images/arrow_right.png) 9px 3px no-repeat;" onclick="editparams('right')"></div>
+									<div class="middle-button" style="background: url(/static/workflow/images/arrow_left.png) 7px 3px no-repeat;" onclick="editparams('left')"></div>
+								</td>
+								<td class="table-right">
+									<span>已选择字段：</span>
+									<select multiple="2" id="text-area-right">
+									</select>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div id="parameter_setting" style="display: none" class="m-param-set-item-menu">
+						<div class="model-task">模型任务</div>
+						<div class="select-radio-group">
+							<input type="radio" name="radio-button" value="train" checked>训练
+							<input type="radio" name="radio-button" value="application">应用
+						</div>
+						<div class="model-task">选择模型来源</div>
+						<div class="select-radio-group">
+							<input type="file" name="model-from" value="浏览" style="width: 200px">
+						</div>
+					</div>
+					<div id="select_function" style="display: none" class="m-param-set-item-menu">
+						<div class="select-radio-group">
+							<select multiple="2" style="width: 200px;height: 300px;">
+								<option value="a">a()</option>
+								<option value="b">b()</option>
+								<option value="c">c()</option>
+								<option value="d">d()</option>
+								<option value="e">e()</option>
+								<option value="f">f()</option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="m-footer">
+				<span>Copyright©2001-2017 all rights reserved. 上海天律信息技术有限公司</span>
+			</div>
+		</div>
+		<div id="r_menu">
+			<ul>
+				<li class="r_menu_item" method="add">添加数据源</li>
+				<li class="r_menu_item" method="change">修改标题</li>
+				<li class="r_menu_item" method="start">开始运行</li>
+				<li class="r_menu_item" method="datas">数据浏览</li>
+				<li class="r_menu_item" method="copy">复制</li>
+				<li class="r_menu_item" method="paste">粘贴</li>
+				<li class="r_menu_item" method="delete">删除</li>
+				<li class="r_menu_item" method="refresh">刷新</li>
+			</ul>
+		</div>
+		<div id="red-point"></div>
+		<div id="drop-down-menu">
+			<div id="chart-left">
+				<div id="msg-content"></div>
+				<div class="tool-content">
+					<img id="emo-menu" class="tool-menu" src="/static/workflow/images/emo.png"/>
+					<img id="game-menu" class="tool-menu" src="/static/workflow/images/five_game.png"/>
+				</div>
+				<div id="emo-list">
+					<ul id="emo-list-box"></ul>
+				</div>
+				<div class="input-box">
+					<textarea id="input-msg-box" placeholder="" ></textarea>
+					<input id="send-msg" type="button" value="发送">
+				</div>
+			</div>
+			<div id="chart-right"></div>
+		</div>
+	</body>
+	<script type="text/javascript" src="/static/workflow/js/index.js" ></script>
+</html>

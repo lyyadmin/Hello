@@ -1,0 +1,235 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<!--[if lt IE 9]>
+<script type="text/javascript" src="lib/html5shiv.js"></script>
+<script type="text/javascript" src="lib/respond.min.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="/static/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="/static/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="/static/css/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="/static/css/style.css" />
+<!--[if IE 6]>
+<script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<title>角色管理</title>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 用户管理 <span class="c-gray en">&gt;</span> 角色管理 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+	<div class="cl pd-5 bg-1 bk-gray"> <span class="l"> <a href="javascript:;" onclick="datadel()" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a> <a class="btn btn-primary radius" href="javascript:;" onclick="admin_role_add('添加角色','admin-role-add.html?act=addrole','800')"><i class="Hui-iconfont">&#xe600;</i> 添加角色</a> </span> <span class="r">共有数据：<strong><span id="role_total"></span></strong> 条</span> </div>
+	<table class="table table-border table-bordered table-hover table-bg">
+		<thead>
+			<tr>
+				<th scope="col" colspan="6">角色管理</th>
+			</tr>
+			<tr class="text-c">
+				<th width="25"><input type="checkbox" value="" name=""></th>
+				<th width="40">ID</th>
+				<th width="200">角色名</th>
+				<th>用户列表</th>
+				<th width="300">描述</th>
+				<th width="70">操作</th>
+			</tr>
+		</thead>
+		<tbody id="rolelist">
+			<tr class="text-c">
+				<td><input type="checkbox" value="" name=""></td>
+				<td>1</td>
+				<td>超级管理员</td>
+				<td><a href="#">admin</a></td>
+				<td>拥有至高无上的权利</td>
+				<td class="f-14"><a title="编辑" href="javascript:;" onclick="admin_role_edit('角色编辑','admin-role-add.html','1')" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> <a title="删除" href="javascript:;" onclick="admin_role_del(this,'1')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td>
+			</tr>
+			<tr class="text-c">
+				<td><input type="checkbox" value="" name=""></td>
+				<td>2</td>
+				<td>总编</td>
+				<td><a href="#">张三</a></td>
+				<td>具有添加、审核、发布、删除内容的权限</td>
+				<td class="f-14"><a title="编辑" href="javascript:;" onclick="admin_role_edit('角色编辑','admin-role-add.html','2')" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> <a title="删除" href="javascript:;" onclick="admin_role_del(this,'1')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td>
+			</tr>
+			<tr class="text-c">
+				<td><input type="checkbox" value="" name=""></td>
+				<td>3</td>
+				<td>栏目主辑</td>
+				<td><a href="#">李四</a>，<a href="#">王五</a></td>
+				<td>只对所在栏目具有添加、审核、发布、删除内容的权限</td>
+				<td class="f-14"><a title="编辑" href="javascript:;" onclick="admin_role_edit('角色编辑','admin-role-add.html','3')" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> <a title="删除" href="javascript:;" onclick="admin_role_del(this,'1')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td>
+			</tr>
+			<tr class="text-c">
+				<td><input type="checkbox" value="" name=""></td>
+				<td>4</td>
+				<td>栏目编辑</td>
+				<td><a href="#">赵六</a>，<a href="#">钱七</a></td>
+				<td>只对所在栏目具有添加、删除草稿等权利。</td>
+				<td class="f-14">
+				<a title="编辑" href="javascript:;" onclick="admin_role_edit('角色编辑','admin-role-add.html','4')" style="text-decoration:none">
+				<i class="Hui-iconfont">&#xe6df;</i>
+				</a> 
+				<a title="删除" href="javascript:;" onclick="admin_role_del(this,'1')" class="ml-5" style="text-decoration:none">
+				<i class="Hui-iconfont">&#xe6e2;</i>
+				</a>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="/static/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="/static/js/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="/static/js/H-ui.min.js"></script>
+<script type="text/javascript" src="/static/js/H-ui.admin.js"></script>
+<!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/static/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+/*管理员-角色-添加*/
+function admin_role_add(title,url,w,h){
+	layer_show(title,url,w,h);
+}
+/*管理员-角色-编辑*/
+function admin_role_edit(title,url,id,w,h){
+	layer_show(title,url,w,h);
+}
+/*管理员-角色-删除*/
+function admin_role_del(obj,id){
+	layer.confirm('角色删除须谨慎，确认要删除吗？',function(index){
+		$.ajax({
+			type: 'POST',
+			url: "/role/roleremove",
+			data:{"roleid":id},
+			dataType: 'json',
+			success: function(data) {
+				var str = '移除失败！'
+				if(data!="0"){
+					$(obj).parents("tr").remove();
+					str = '已删除！'
+				}
+				layer.msg(str, {
+					icon: 1,
+					time: 1000
+				});
+			},
+			error: function(data) {
+				layer.msg('移除失败！', {
+					icon: 1,
+					time: 1000
+				});
+			},
+		});			
+	});
+}
+
+function refresh_role_list(){
+	location.replace(location.href);
+}
+function role_load() {
+	$.ajax({
+		type: "POST",
+		url: "/role/rolelist",
+		async: false,
+		error: function(request) {
+			alert("Connection error");
+		},
+		success: function(data) {
+			var obj = JSON.parse(data);
+			var count = obj.count;
+			$("#role_total").html(count);
+			if(count>0) {
+				addrolesinfo(obj.data);
+			} else {
+				removeAllChild("rolelist");
+			}
+		}
+	});
+}
+function removeAllChild(id){  
+    var div = document.getElementById(id);  
+    while(div.hasChildNodes()){ //当div下还存在子节点时 循环继续  
+        div.removeChild(div.firstChild);  
+    }  
+}  
+function addrolesinfo(roles){
+	var list = $("#rolelist");
+	removeAllChild("rolelist")
+	for(var i=0;i<roles.length;i++){
+		list.append(createChildView(i+1,roles[i]))
+	}
+}
+function createChildView(i,role){
+	var _tr = document.createElement("tr");
+	var str = '<td><input type="checkbox" value="" name="" title="'+role.role_name+'" roleid="'+role.role_id+'"/></td>';
+	str+= '<td>'+i+'</td>';
+	str+= '<td>'+role.role_name+'</td>';
+	str+= '<td>'+role.role_users+'</td>';
+	str+= '<td>'+role.role_mark+'</td>';
+	str+= '<td class="f-14">';
+	str+= '<a title="编辑" href="javascript:;" onclick="admin_role_edit(\'角色编辑\',\'admin-role-add.html?roleid='+role.role_id+'&act=editrole\',\'4\')" style="text-decoration:none">'
+	str+= '<i class="Hui-iconfont">&#xe6df;</i>'
+	str+= '</a>'
+	str+= '<a title="删除" href="javascript:;" onclick="admin_role_del(this,\''+role.role_id+'\')" class="ml-5" style="text-decoration:none">'
+	str+= '<i class="Hui-iconfont">&#xe6e2;</i>'
+	str+= '</a>'
+	str+= '</td>';
+	_tr.innerHTML = str;
+	_tr.setAttribute("class","text-c");
+	return _tr;
+}
+function datadel(){
+	var list = ""
+	var name = ""
+	$("#rolelist").find("input[type='checkbox']").each(function (i) {
+	    var checked = this.checked;
+	    if (checked == true) {
+	        list = list + "," + $(this).attr("roleid").toString();
+	        name = name + "," + $(this).attr("title").toString();
+	    }
+	});
+	if(list==""){
+		layer.alert('请选择要删除的角色！', {
+				icon: 0,
+				skin: 'layer-ext-moon' 
+				,anim: 4
+		});
+		return;
+	}
+	list = list.substring(1);
+	name = name.substring(1);
+	layer.confirm('确认要删除角色【'+name+'】吗？', function(index) {
+		$.ajax({
+			type: 'POST',
+			url: "/role/rolebatchremove",
+			data:{"batch":list},
+			dataType: 'json',
+			success: function(data) {
+				var str = '移除失败！'
+				if(data.status!="0"){
+					location.replace(location.href);
+					str = '已删除！'
+				}
+				layer.msg(str, {
+					icon: 1,
+					time: 1000
+				});
+			},
+			error: function(data) {
+				layer.msg('移除失败！', {
+					icon: 1,
+					time: 1000
+				});
+			},
+		});
+	});
+}
+role_load();
+</script>
+</body>
+</html>
