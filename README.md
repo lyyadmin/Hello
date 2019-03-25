@@ -1,1 +1,2 @@
 # Hello
+用python语言和websocket编写的五子棋在线游戏对战。
