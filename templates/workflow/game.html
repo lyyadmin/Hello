@@ -422,7 +422,7 @@
             });
         }
         function connectServer() {
-            var wsUri = "ws://{{host}}/game/comeinroom";
+            var wsUri = "ws://localhost/game/comeinroom";
             websocket = new WebSocket(wsUri);
             websocket.onopen = function (evt) {
                 if(!room){

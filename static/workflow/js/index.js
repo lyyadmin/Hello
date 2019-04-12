@@ -846,7 +846,7 @@ $(function () {
     function get_random_color() {
         return "#"+get_random_number(9)+get_random_number(9)+get_random_number(9)+get_random_number(9)+get_random_number(9)+get_random_number(9);
     }
-    var wsUri = "ws://"+window.host+"/ws/connect";
+    var wsUri = "ws://localhost/ws/connect";
     var userid;
     var websocket = new WebSocket(wsUri);
     websocket.onopen = function (evt) {

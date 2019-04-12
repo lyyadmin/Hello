@@ -130,7 +130,7 @@
             }
         }
         function connectServer() {
-            var wsUri = "ws://{{host}}/game/connectroom";
+            var wsUri = "ws://localhost/game/connectroom";
             websocket = new WebSocket(wsUri);
             websocket.onopen = function (evt) {
                 $("#header").html("游戏房间（已连接）")

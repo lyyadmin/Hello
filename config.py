@@ -16,7 +16,7 @@ configs = {
 #                     用户名
                     'username'        : 'root',
 #                     密码
-                    'password'        : 'root',
+                    'password'        : '123456',
 #                     编码
                     'charset'        : 'utf8',
                     },
